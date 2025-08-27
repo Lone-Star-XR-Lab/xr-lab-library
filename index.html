@@ -25,13 +25,26 @@
       </template>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" x-show="apps.length">
-      <input type="text" x-model="query" placeholder="Search…" class="w-full border px-3 py-2 rounded-md shadow-sm col-span-2">
+    <!-- Filters / Sort -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6" x-show="apps.length">
+      <input
+        type="text"
+        x-model="query"
+        placeholder="Search…"
+        class="w-full border px-3 py-2 rounded-md shadow-sm md:col-span-2">
+
       <select x-model="department" class="w-full border px-3 py-2 rounded-md shadow-sm">
         <option value="">All Departments</option>
         <template x-for="opt in departmentOptions" :key="opt">
           <option :value="opt" x-text="opt"></option>
         </template>
+      </select>
+
+      <!-- New: Sort control -->
+      <select x-model="sortMode" class="w-full border px-3 py-2 rounded-md shadow-sm">
+        <option value="default">Sort: Default</option>
+        <option value="az">Sort: Title A–Z</option>
+        <option value="za">Sort: Title Z–A</option>
       </select>
     </div>
 
@@ -82,28 +95,51 @@
       query: '',
       department: '',
       departmentOptions: [],
+      sortMode: 'default', // 'default' | 'az' | 'za'
+
       get apps() {
         return this.DATA_BY_TAB[this.currentTab] || [];
       },
+
       get filteredApps() {
         const q = this.query.toLowerCase();
-        return this.apps.filter(app => {
+
+        // 1) Filter
+        let out = this.apps.filter(app => {
           const matchesDept = !this.department || app.department === this.department;
           const text = Object.values(app).filter(v => typeof v === 'string').join(' ').toLowerCase();
           const matchesQuery = !q || text.includes(q);
           return matchesDept && matchesQuery;
         });
+
+        // 2) Sort (without mutating original arrays)
+        const collator = new Intl.Collator(undefined, { sensitivity: 'base', numeric: false });
+        if (this.sortMode === 'az') {
+          out = [...out].sort((a, b) => collator.compare((a.title || ''), (b.title || '')));
+        } else if (this.sortMode === 'za') {
+          out = [...out].sort((a, b) => collator.compare((b.title || ''), (a.title || '')));
+        } else {
+          // default/original order preserved via _idx captured on load
+          out = [...out].sort((a, b) => (a._idx ?? 0) - (b._idx ?? 0));
+        }
+        return out;
       },
+
       switchTab(tab) {
         this.currentTab = tab;
         this.query = '';
         this.department = '';
+        this.sortMode = 'default';
         this.refreshDepartments();
       },
+
       refreshDepartments() {
         const set = new Set(this.apps.map(app => app.department).filter(Boolean));
-        this.departmentOptions = Array.from(set).sort();
+        this.departmentOptions = Array.from(set).sort((a, b) =>
+          new Intl.Collator(undefined, { sensitivity: 'base' }).compare(a, b)
+        );
       },
+
       async loadData() {
         try {
           const [appsRes, videosRes, webxrRes] = await Promise.all([
@@ -117,11 +153,13 @@
             webxrRes.json()
           ]);
 
-          // Map arrays to your existing tab labels
+          // Tag each item with an original index so "Default" preserves native order per tab
+          const withIndex = arr => arr.map((item, i) => ({ ...item, _idx: i }));
+
           this.DATA_BY_TAB = {
-            "App Library": apps,
-            "Video Content": videos,
-            "WebXR Content": webxr
+            "App Library": withIndex(apps),
+            "Video Content": withIndex(videos),
+            "WebXR Content": withIndex(webxr)
           };
 
           this.sheetNames = Object.keys(this.DATA_BY_TAB);

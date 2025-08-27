@@ -195,7 +195,7 @@
     "educational": "Great for geography, geology, and cultural studies; discuss terrain, history, and preservation.",
     "notes": "Large download size",
     "link": "https://www.meta.com/experiences/blueplanet-vr-explore-v25/3422717251188752/",
-    "logo": "images/apps/blueplanet-vr-explore.jpg"
+    "logo": "images/apps/blueplanet-vr-explore-v25.jpg"
   },
   {
     "title": "Anne Frank House VR",
@@ -295,6 +295,137 @@
   "notes": "Free on Meta Quest; consider preloading assets; great for instructor-led tours.",
   "link": "https://www.meta.com/experiences/energy-encyclopedia-vr/25876818165266366/",
   "logo": "images/apps/energy-encyclopedia-vr.jpg"
+},
+{
+  "title": "Ovation",
+  "department": "Communications, Business",
+  "platform": "Meta Quest",
+  "tags": "Public Speaking, Presentation, Soft Skills, AI Feedback",
+  "description": "A VR public-speaking trainer where you present to realistic AI avatars and receive AI-generated feedback on delivery.",
+  "educational": "Use for speech and communications courses to practice presentations, interviews, and Q&A—reinforce pacing, eye contact, filler words, and confidence with repeatable scenarios.",
+  "notes": "Headset mic recommended; advanced features require a subscription.",
+  "link": "https://www.meta.com/experiences/ovation/4510688418969375/",
+  "logo": "images/apps/ovation.jpg"
+},
+{
+  "title": "Wooorld",
+  "department": "Social Sciences, Geography",
+  "platform": "Meta Quest",
+  "tags": "Geography, Maps, Mixed Reality, Field Trips, Collaboration",
+  "description": "A mixed-reality 3D world map with Google-Earth-style terrain and buildings, street imagery, and multiplayer co-exploration right in your room.",
+  "educational": "Run virtual field trips to cities and landmarks; discuss cultural/physical geography, urban planning, and landforms; use co-present exploration for place-based inquiry and presentations.",
+  "notes": "Internet required; multiplayer sessions supported; consider preloading target locations for class.",
+  "link": "https://www.meta.com/experiences/wooorld/4360608937312293/",
+  "logo": "images/apps/wooorld.jpg"
+},
+{
+  "title": "Human Anatomy VR",
+  "department": "Health Science, Biology",
+  "platform": "Meta Quest",
+  "tags": "Anatomy, Physiology, Medical, Biology",
+  "description": "A comprehensive VR anatomy atlas with labeled 3D models across major body systems, micro-anatomy views, and powerful search/navigation for close-up study.",
+  "educational": "Use in A&P to demonstrate organs and systems, support identification practice, and facilitate instructor-led walk-throughs of structure and function.",
+  "notes": "Standalone app; seated/standing/room-scale; institutional edition available; ~1.2 GB download.",
+  "link": "https://www.meta.com/experiences/human-anatomy-vr/6643334382420936/",
+  "logo": "images/apps/human-anatomy-vr.jpg"
+},
+{
+  "title": "Cosmic XR - Space In Your Room",
+  "department": "Science",
+  "platform": "Meta Quest",
+  "tags": "Astronomy, Mixed Reality, Space, Planets, Hand Tracking",
+  "description": "A mixed-reality space atlas that brings the solar system, galaxies, and black holes into your room with natural hand interactions.",
+  "educational": "Use for astronomy/Earth science to demonstrate scale, motion, and comparative planetology; run MR ‘in-room’ field trips and student presentations.",
+  "notes": "Supports hand tracking and passthrough MR; designed for Quest 2/3/3S/Pro; allow clear floor space for in-room exploration.",
+  "link": "https://www.meta.com/experiences/cosmic-xr-space-in-your-room/9293405654102503/",
+  "logo": "images/apps/cosmic-xr-space-in-your-room.jpg"
+},
+{
+  "title": "Bodyswaps - Soft Skills Training",
+  "department": "Communications, Business, Career Services, Health Science",
+  "platform": "Meta Quest",
+  "tags": "Soft Skills, Communication, Interview, Leadership, Role-play, AI Feedback",
+  "description": "AI-powered VR simulations where learners practice with virtual humans and receive personalized feedback across communication, employability, leadership, and EDI scenarios.",
+  "educational": "Use for public speaking and interview practice in communications/career courses; run role-plays for empathy and patient communication in health science; debrief with feedback to build reflective practice.",
+  "notes": "Institutional licensing/subscription; free demo available; headset mic recommended; internet required for online features.",
+  "link": "https://www.meta.com/experiences/bodyswaps-soft-skills-training/3714188128706579/",
+  "logo": "images/apps/bodyswaps-soft-skills-training.jpg"
+},
+{
+  "title": "IMMERROCK",
+  "department": "Fine Arts, Music",
+  "platform": "Meta Quest",
+  "tags": "Music, Guitar, Mixed Reality, Practice, Note Detection",
+  "description": "A mixed-reality guitar trainer that overlays chords, tabs, and guidance onto your real instrument, with bite-sized exercises and real-time accuracy feedback.",
+  "educational": "Great for applied music: scaffold chord changes, rhythm, scales, and sight-reading; use progress-based practice for formative assessment and individual skill building.",
+  "notes": "Requires a real guitar; passthrough MR with on-device note detection; recommend quiet room and proper strap/stance for longer sessions.",
+  "link": "https://www.meta.com/experiences/immerrock/7334845636643834/",
+  "logo": "images/apps/immerrock.jpg"
+},
+{
+  "title": "Warship Mars",
+  "department": "History, Humanities, Science",
+  "platform": "Meta Quest",
+  "tags": "History, Archaeology, Photogrammetry, Marine, Exploration",
+  "description": "A VR diving expedition to the 1564 wreck of the Swedish flagship Mars, built from high-detail photogrammetry. Explore the site underwater, document finds, then analyze them in a virtual research space.",
+  "educational": "Great for history/archaeology units: run a virtual field trip, practice evidence collection, and discuss maritime technology, conflict, and preservation ethics.",
+  "notes": "Free on Quest; includes Diving and Researcher modes; internet required for download.",
+  "link": "https://www.meta.com/experiences/warship-mars/4174899085866711/",
+  "logo": "images/apps/warship-mars.jpg"
+},
+{
+  "title": "Titanic VR",
+  "department": "History, Humanities, Science",
+  "platform": "Meta Quest",
+  "tags": "History, Maritime Archaeology, Submarine, ROV, Exploration",
+  "description": "A diving simulator and immersive interactive story at the RMS Titanic wreck site—pilot a submersible and ROV, survey the debris field, and experience cinematic historical sequences.",
+  "educational": "Use for history/archaeology units to discuss evidence gathering, preservation ethics, maritime technology, and primary-source interpretation via virtual fieldwork.",
+  "notes": "Single-player; includes exploration missions and story content; over 6 hours of content; consider content sensitivity for some learners.",
+  "link": "https://www.meta.com/experiences/titanic-vr/9391298297622125/",
+  "logo": "images/apps/titanic-vr.jpg"
+},
+{
+  "title": "Geo Voyage",
+  "department": "Social Sciences, Geography, STEM",
+  "platform": "Meta Quest",
+  "tags": "Geography, Mixed Reality, Maps, AI Agent, Google Maps",
+  "description": "A mixed-reality learning app that turns your room into a globe you can explore—drop a pin and jump from a spatial map into an immersive view, guided by an AI learning agent.",
+  "educational": "Use for virtual field trips and place-based inquiry. Compare regions, landmarks, and human/physical geography; leverage the AI guide for Q&A, definitions, and research prompts.",
+  "notes": "Built with Meta Spatial SDK; integrates Llama 3 + Wit.AI and Google Maps API for MR→VR transitions; internet required for AI/map features.",
+  "link": "https://www.meta.com/experiences/geo-voyage/8230251250434003/",
+  "logo": "images/apps/geo-voyage.jpg"
+},
+{
+  "title": "MLK: Now is the Time",
+  "department": "Humanities, Social Justice, History",
+  "platform": "Meta Quest",
+  "tags": "Civil Rights, History, VR Film, Interactive, March on Washington",
+  "description": "An immersive interpretation of Dr. King’s “I Have a Dream” speech that explores ongoing inequities through first-person stories and interactive scenes.",
+  "educational": "Use for civil rights and U.S. history units to connect 1963 to today—facilitate reflection on housing, voting, and policing; prompt discussion, journaling, and source analysis.",
+  "notes": "Free on Quest; audio excerpts from the speech; preview mature themes and plan a guided debrief.",
+  "link": "https://www.meta.com/experiences/mlk-now-is-the-time/4790561384366997/",
+  "logo": "images/apps/mlk-now-is-the-time.jpg"
+},
+{
+  "title": "JFK Memento: The Immersive Documentary",
+  "department": "History, Humanities",
+  "platform": "Meta Quest",
+  "tags": "History, Documentary, 3D Archives, Dallas 1963, Investigation",
+  "description": "A ~40-minute immersive VR documentary that revisits November 22, 1963 and the investigation that followed, blending narration with archival films and photos remastered in 3D and projected onto historic sites.",
+  "educational": "Use in U.S. history/civics to analyze primary sources and media; discuss historical context, eyewitness narratives, and how evidence is presented. Ideal for guided viewing with reflection prompts.",
+  "notes": "Appears on the Meta Store as “Inside History: The JFK Assassination” (by TARGO). Family-appropriate presentation with no graphic depictions; consider content sensitivity and plan a debrief.",
+  "link": "https://www.meta.com/experiences/inside-history-the-jfk-assassination/6864747670240243/",
+  "logo": "images/apps/jfk-memento-the-immersive-documentary.jpg"
 }
+
+
+
+
+
+
+
+
+
+
 
 ]
