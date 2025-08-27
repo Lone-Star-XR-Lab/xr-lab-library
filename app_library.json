@@ -99,17 +99,6 @@
     "logo": "images/apps/figmin-xr.jpg"
   },
   {
-    "title": "Sketchfab Viewer (Browser)",
-    "department": "Fine Arts, Humanities, STEM",
-    "platform": "Meta Quest (Browser)",
-    "tags": "3D Models, Galleries",
-    "description": "An online platform to view and interact with 3D models directly in the Quest browser.",
-    "educational": "Teachers can use 3D artifacts, models, and datasets across history, science, and art lessons.",
-    "notes": "Use Quest browser; site account optional",
-    "link": "https://sketchfab.com",
-    "logo": "images/apps/sketchfab-viewer-browser.jpg"
-  },
-  {
     "title": "Nanome",
     "department": "STEM",
     "platform": "Meta Quest",
@@ -140,7 +129,7 @@
     "educational": "Use to introduce cell biology concepts and systems-level thinking with memorable visuals.",
     "notes": "Standalone app",
     "link": "https://www.meta.com/experiences/the-body-vr/869485659814410/",
-    "logo": "images/apps/the-body-vr-journey-inside-a-cell.jpg"
+    "logo": "images/apps/the-body-vr.jpg"
   },
   {
     "title": "3D Organon VR Anatomy (XR Premium)",
@@ -184,7 +173,7 @@
     "educational": "Use in history and science to discuss the space race, teamwork, and engineering breakthroughs.",
     "notes": "Cinematic experience",
     "link": "https://www.meta.com/experiences/apollo-11/2164469606967296/",
-    "logo": "images/apps/apollo-11-vr.jpg"
+    "logo": "images/apps/apollo-11.jpg"
   },
   {
     "title": "Ocean Rift",
@@ -239,7 +228,7 @@
     "educational": "Supports ESL and language courses with immersive speaking and listening practice.",
     "notes": "Headset mic use",
     "link": "https://www.meta.com/experiences/mondly-practice-languages-in-vr/4214902388537196/",
-    "logo": "images/apps/mondly-languages-in-vr.jpg"
+    "logo": "images/apps/mondly-practice-languages-in-vr.jpg"
   },
   {
     "title": "Immerse \u2014 Learn Languages in VR",
@@ -250,7 +239,7 @@
     "educational": "Good for conversational fluency and cultural role-play activities in class.",
     "notes": "Scheduling required",
     "link": "https://www.meta.com/experiences/immerse-language-learning/3181432891940455/",
-    "logo": "images/apps/immerse-learn-languages-in-vr.jpg"
+    "logo": "images/apps/immerse-language-learning.jpg"
   },
   {
     "title": "ENGAGE XR",
@@ -295,5 +284,17 @@
     "notes": "Seated recommended",
     "link": "https://www.meta.com/experiences/tripp-meditation-relaxation-sleep/2173576192720129/",
     "logo": "images/apps/tripp.jpg"
-  }
+  },
+  {
+  "title": "Energy Encyclopedia VR",
+  "department": "Science, Engineering",
+  "platform": "Meta Quest",
+  "tags": "Energy, Power Plants, Physics, Sustainability",
+  "description": "An interactive VR exhibit of energy systems with detailed, technically accurate 3D models. Explore 20+ animated cross-sections and visit life-size power plant sites (fission, fusion, solar, hydro, wind).",
+  "educational": "Use for STEM/engineering lessons to compare generation methods, efficiency, safety, and environmental impact; run virtual field trips and system walkthroughs.",
+  "notes": "Free on Meta Quest; consider preloading assets; great for instructor-led tours.",
+  "link": "https://www.meta.com/experiences/energy-encyclopedia-vr/25876818165266366/",
+  "logo": "images/apps/energy-encyclopedia-vr.jpg"
+}
+
 ]
