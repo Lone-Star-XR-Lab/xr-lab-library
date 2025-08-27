@@ -1,0 +1,57 @@
+[
+  {
+    "title": "Poly Pizza",
+    "department": "Art",
+    "platform": "WebXR",
+    "tags": "3D Models, Creative Tools, Low-Poly",
+    "description": "Explore and download stylized 3D models for use in XR and game development.",
+    "educational": "Students can search and incorporate free-to-use 3D assets into XR, game design, or digital art projects.",
+    "notes": "",
+    "link": "https://poly.pizza/",
+    "logo": "images/apps/poly-pizza.jpg"
+  },
+  {
+    "title": "Hubs by Mozilla",
+    "department": "Communications",
+    "platform": "WebXR",
+    "tags": "Virtual Collaboration, Meetings, Social",
+    "description": "Create shared 3D spaces for meetings, events, or educational walkthroughs \u2014 all in your browser.",
+    "educational": "Great for virtual classrooms, student collaboration, and presentations in immersive environments.",
+    "notes": "",
+    "link": "https://hubs.mozilla.com/",
+    "logo": "images/apps/hubs.jpg"
+  },
+  {
+    "title": "Sketchfab",
+    "department": "Art",
+    "platform": "WebXR",
+    "tags": "3D Viewer, Models, Embed",
+    "description": "Browse millions of interactive 3D models and view them in WebXR-enabled browsers.",
+    "educational": "Art and science instructors can use Sketchfab to embed and explore 3D structures and artworks.",
+    "notes": "",
+    "link": "https://sketchfab.com/",
+    "logo": "images/apps/sketchfab.jpg"
+  },
+  {
+    "title": "Access Mars",
+    "department": "Science",
+    "platform": "WebXR",
+    "tags": "Mars, Space, NASA, VR",
+    "description": "Explore the surface of Mars using real imagery captured by NASA's Curiosity rover.",
+    "educational": "Perfect for astronomy and earth science classes to visualize planetary exploration.",
+    "notes": "",
+    "link": "https://accessmars.withgoogle.com/",
+    "logo": "images/apps/accessmars.jpg"
+  },
+  {
+    "title": "SculptGL",
+    "department": "Art",
+    "platform": "WebXR",
+    "tags": "3D Sculpting, Design, Art",
+    "description": "Free browser-based 3D sculpting app \u2014 like a virtual clay studio.",
+    "educational": "Students can experiment with form and shape using virtual sculpting tools from any device.",
+    "notes": "",
+    "link": "https://stephaneginier.com/sculptgl/",
+    "logo": "images/apps/sculptgl.jpg"
+  }
+]

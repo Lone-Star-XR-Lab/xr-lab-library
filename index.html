@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lone Star XR Lab App Library</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-900" x-data="app()" x-init='loadData()'>
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <h1 class="text-3xl font-bold mb-2">Lone Star XR Lab App Library</h1>
+
+    <p class="text-sm text-gray-700 mb-6">
+      <strong>Note:</strong> This list includes apps and XR content that <em>may not currently be installed</em> in the XR Lab. These are curated examples of experiences available for Meta Quest that may be valuable in educational settings.
+    </p>
+
+    <div class="flex flex-wrap gap-2 mb-4" x-show="sheetNames.length">
+      <template x-for="tab in sheetNames" :key="tab">
+        <button
+          @click="switchTab(tab)"
+          :class="tab === currentTab ? 'bg-blue-600 text-white' : 'bg-white text-gray-800 border'"
+          class="px-4 py-2 rounded-lg text-sm shadow-sm transition"
+          x-text="tab"></button>
+      </template>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" x-show="apps.length">
+      <input type="text" x-model="query" placeholder="Search…" class="w-full border px-3 py-2 rounded-md shadow-sm col-span-2">
+      <select x-model="department" class="w-full border px-3 py-2 rounded-md shadow-sm">
+        <option value="">All Departments</option>
+        <template x-for="opt in departmentOptions" :key="opt">
+          <option :value="opt" x-text="opt"></option>
+        </template>
+      </select>
+    </div>
+
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" x-show="apps.length">
+      <template x-for="(app, index) in filteredApps" :key="index">
+        <div class="bg-white border rounded-xl shadow-sm overflow-hidden flex flex-col">
+          <template x-if="app.logo">
+            <img :src="app.logo" alt="" class="h-40 object-cover w-full">
+          </template>
+          <div class="p-4 flex-1 flex flex-col">
+            <h2 class="text-lg font-semibold mb-1" x-text="app.title"></h2>
+            <p class="text-sm text-gray-500 mb-2" x-text="app.department"></p>
+
+            <template x-if="app.description">
+              <p class="text-sm text-gray-700 mb-2" x-text="app.description"></p>
+            </template>
+
+            <template x-if="app.educational">
+              <p class="text-sm text-blue-900 italic mb-2">
+                📘 <span x-text="app.educational"></span>
+              </p>
+            </template>
+
+            <template x-if="app.notes">
+              <p class="text-sm text-gray-600 whitespace-pre-line mb-2" x-text="app.notes"></p>
+            </template>
+
+            <div class="mt-auto text-sm text-gray-600" x-text="app.tags"></div>
+
+            <template x-if="app.link">
+              <a :href="app.link" target="_blank" class="mt-3 inline-block text-blue-600 hover:underline text-sm">View</a>
+            </template>
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <p class="mt-6 text-xs text-gray-500" x-show="apps.length && !filteredApps.length">No results found.</p>
+    <p class="mt-6 text-xs text-gray-400 italic" x-show="!apps.length">Loading app data…</p>
+  </div>
+
+<script>
+  function app() {
+    return {
+      DATA_BY_TAB: {},
+      sheetNames: [],
+      currentTab: '',
+      query: '',
+      department: '',
+      departmentOptions: [],
+      get apps() {
+        return this.DATA_BY_TAB[this.currentTab] || [];
+      },
+      get filteredApps() {
+        const q = this.query.toLowerCase();
+        return this.apps.filter(app => {
+          const matchesDept = !this.department || app.department === this.department;
+          const text = Object.values(app).filter(v => typeof v === 'string').join(' ').toLowerCase();
+          const matchesQuery = !q || text.includes(q);
+          return matchesDept && matchesQuery;
+        });
+      },
+      switchTab(tab) {
+        this.currentTab = tab;
+        this.query = '';
+        this.department = '';
+        this.refreshDepartments();
+      },
+      refreshDepartments() {
+        const set = new Set(this.apps.map(app => app.department).filter(Boolean));
+        this.departmentOptions = Array.from(set).sort();
+      },
+      async loadData() {
+        try {
+          const [appsRes, videosRes, webxrRes] = await Promise.all([
+            fetch('app_library.json'),
+            fetch('video_content.json'),
+            fetch('webxr_content.json')
+          ]);
+          const [apps, videos, webxr] = await Promise.all([
+            appsRes.json(),
+            videosRes.json(),
+            webxrRes.json()
+          ]);
+
+          // Map arrays to your existing tab labels
+          this.DATA_BY_TAB = {
+            "App Library": apps,
+            "Video Content": videos,
+            "WebXR Content": webxr
+          };
+
+          this.sheetNames = Object.keys(this.DATA_BY_TAB);
+          this.currentTab = this.sheetNames[0];
+          this.refreshDepartments();
+        } catch (err) {
+          console.error("Failed to load JSON data:", err);
+        }
+      }
+    }
+  }
+</script>
+</body>
+</html>
