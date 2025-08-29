@@ -6,15 +6,31 @@
   <title>Lone Star XR Lab App Library</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    @media print {
+      body { background: #fff !important; color: #000 !important; }
+      .no-print { display: none !important; }
+      .grid { display: block !important; }
+      .grid > * { break-inside: avoid; margin-bottom: 1rem; }
+      .shadow-sm, .shadow, .shadow-lg { box-shadow: none !important; }
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-900" x-data="app()" x-init='loadData()'>
+<body class="bg-gray-50 text-gray-900" x-data="app()" x-init="loadData()">
   <div class="max-w-7xl mx-auto px-4 py-6">
-    <h1 class="text-3xl font-bold mb-2">Lone Star XR Lab App Library</h1>
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-3">
+      <h1 class="text-3xl font-bold">Lone Star XR Lab App Library</h1>
+      <p class="text-xs text-gray-500 no-print">
+        <span class="underline decoration-dotted cursor-help" title="XR is an umbrella term for VR, AR, and MR.">What is XR?</span>
+      </p>
+    </div>
 
-    <p class="text-sm text-gray-700 mb-6">
+    <p class="text-sm text-gray-700 mt-2 mb-6">
       <strong>Note:</strong> This list includes apps and XR content that <em>may not currently be installed</em> in the XR Lab. These are curated examples of experiences available for Meta Quest that may be valuable in educational settings.
     </p>
 
+    <!-- Tabs -->
     <div class="flex flex-wrap gap-2 mb-4" x-show="sheetNames.length">
       <template x-for="tab in sheetNames" :key="tab">
         <button
@@ -23,60 +39,186 @@
           class="px-4 py-2 rounded-lg text-sm shadow-sm transition"
           x-text="tab"></button>
       </template>
+      <div class="ml-auto flex items-center gap-3 no-print">
+        <span class="text-xs text-gray-500" x-text="filteredApps.length + ' results'"></span>
+        <button class="text-xs underline" @click="togglePrintMode()"
+                x-text="printMode ? 'Exit print view' : 'Print-friendly view'"></button>
+      </div>
     </div>
 
-    <!-- Filters / Sort -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6" x-show="apps.length">
-      <input
-        type="text"
-        x-model="query"
-        placeholder="Search…"
-        class="w-full border px-3 py-2 rounded-md shadow-sm md:col-span-2">
+    <!-- Controls bar: Department dropdown + Search + Sort + Saved -->
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-3 no-print" x-show="apps.length">
+      <!-- Department dropdown (with counts) -->
+      <div class="md:col-span-2">
+        <label class="block text-xs text-gray-600 mb-1">Department</label>
+        <select x-model="department" class="w-full border px-3 py-2 rounded-md shadow-sm">
+          <option value="">All Departments</option>
+          <template x-for="opt in departmentOptions" :key="opt">
+            <option :value="opt" x-text="deptOptionLabel(opt)"></option>
+          </template>
+        </select>
+      </div>
 
-      <select x-model="department" class="w-full border px-3 py-2 rounded-md shadow-sm">
-        <option value="">All Departments</option>
-        <template x-for="opt in departmentOptions" :key="opt">
-          <option :value="opt" x-text="opt"></option>
-        </template>
-      </select>
+      <!-- Search -->
+      <div class="md:col-span-2">
+        <label class="block text-xs text-gray-600 mb-1">Search</label>
+        <input type="text" x-model="query" placeholder="Title, notes, tags…"
+               class="w-full border px-3 py-2 rounded-md shadow-sm">
+      </div>
 
-      <!-- New: Sort control -->
-      <select x-model="sortMode" class="w-full border px-3 py-2 rounded-md shadow-sm">
-        <option value="default">Sort: Default</option>
-        <option value="az">Sort: Title A–Z</option>
-        <option value="za">Sort: Title Z–A</option>
-      </select>
+      <!-- Sort + Saved -->
+      <div class="md:col-span-1">
+        <label class="block text-xs text-gray-600 mb-1">Sort</label>
+        <div class="flex items-center gap-2">
+          <select x-model="sortMode" class="border px-3 py-2 rounded-md shadow-sm w-full">
+            <option value="az">Title A–Z</option>
+            <option value="za">Title Z–A</option>
+          </select>
+        </div>
+        <label class="mt-2 flex items-center gap-2 text-sm">
+          <input type="checkbox" x-model="savedOnly" />
+          <span>Saved only</span>
+        </label>
+      </div>
     </div>
 
+    <!-- Quick Filters (compact) -->
+    <div class="flex flex-wrap items-center gap-2 mb-5 no-print" x-show="apps.length">
+      <span class="text-sm font-semibold text-gray-700">Quick filters:</span>
+      <button @click="togglePill('free')"        :class="pillClass('free')"        class="px-3 py-1.5 rounded-full text-sm border">Free</button>
+      <button @click="togglePill('short')"       :class="pillClass('short')"       class="px-3 py-1.5 rounded-full text-sm border">≤ 15 min</button>
+      <button @click="togglePill('hands')"       :class="pillClass('hands')"       class="px-3 py-1.5 rounded-full text-sm border">Hands</button>
+      <button @click="togglePill('lowmotion')"   :class="pillClass('lowmotion')"   class="px-3 py-1.5 rounded-full text-sm border">Low motion</button>
+      <button @click="togglePill('quest3')"      :class="pillClass('quest3')"      class="px-3 py-1.5 rounded-full text-sm border">Quest 3</button>
+      <button @click="clearAll()" class="ml-2 text-xs underline">Clear all</button>
+    </div>
+
+    <!-- Cards -->
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" x-show="apps.length">
       <template x-for="(app, index) in filteredApps" :key="index">
         <div class="bg-white border rounded-xl shadow-sm overflow-hidden flex flex-col">
           <template x-if="app.logo">
-            <img :src="app.logo" alt="" class="h-40 object-cover w-full">
+            <img :src="app.logo" alt="" class="h-44 object-cover w-full" loading="lazy" width="640" height="176">
           </template>
+
           <div class="p-4 flex-1 flex flex-col">
-            <h2 class="text-lg font-semibold mb-1" x-text="app.title"></h2>
-            <p class="text-sm text-gray-500 mb-2" x-text="app.department"></p>
+            <!-- Title + Save -->
+            <div class="flex items-start gap-2">
+              <h2 class="text-lg font-semibold flex-1 leading-snug" x-text="app.title"></h2>
+              <button class="text-sm border rounded px-2 py-1 no-print"
+                      :aria-pressed="isSaved(app) ? 'true' : 'false'"
+                      @click="toggleSave(app)">
+                <span x-show="!isSaved(app)">☆ Save</span>
+                <span x-show="isSaved(app)">★ Saved</span>
+              </button>
+            </div>
 
+            <!-- Department badges -->
+            <div class="flex flex-wrap gap-2 mt-2 mb-3">
+              <template x-for="d in parseDepts(app.department)" :key="d">
+                <span class="text-xs px-2 py-0.5 rounded-full border text-gray-700" x-text="d"></span>
+              </template>
+            </div>
+
+            <!-- At-a-glance badges (prefer structured fields) -->
+            <div class="flex flex-wrap gap-2 mb-3">
+              <template x-if="facet(app, 'free')">
+                <span class="text-[11px] px-2 py-0.5 rounded-full border">Free</span>
+              </template>
+              <template x-if="typeof app.time_min==='number' && app.time_min>0">
+                <span class="text-[11px] px-2 py-0.5 rounded-full border" x-text="'Time: ' + app.time_min + ' min'"></span>
+              </template>
+              <template x-if="(app.input || facet(app,'hands') || facet(app,'controllers'))">
+                <span class="text-[11px] px-2 py-0.5 rounded-full border" x-text="'Input: ' + (app.input || (facet(app,'hands')?'Hands':(facet(app,'controllers')?'Controllers':'–')))"></span>
+              </template>
+              <template x-if="(app.comfort || facet(app,'seated') || facet(app,'room') || facet(app,'standing'))">
+                <span class="text-[11px] px-2 py-0.5 rounded-full border" x-text="'Comfort: ' + (app.comfort || (facet(app,'seated')?'Seated':(facet(app,'room')?'Room-scale':(facet(app,'standing')?'Standing':'Unknown'))))"></span>
+              </template>
+            </div>
+
+            <!-- Summary -->
             <template x-if="app.description">
-              <p class="text-sm text-gray-700 mb-2" x-text="app.description"></p>
+              <p class="text-sm text-gray-800 mb-2" x-text="app.description"></p>
             </template>
-
             <template x-if="app.educational">
               <p class="text-sm text-blue-900 italic mb-2">
                 📘 <span x-text="app.educational"></span>
               </p>
             </template>
 
-            <template x-if="app.notes">
-              <p class="text-sm text-gray-600 whitespace-pre-line mb-2" x-text="app.notes"></p>
-            </template>
+            <div class="mt-auto flex items-center justify-between">
+              <div class="text-xs text-gray-600 truncate" x-text="Array.isArray(app.tags) ? app.tags.join(', ') : (app.tags || '')"></div>
+              <div class="flex items-center gap-3">
+                <template x-if="app.link">
+                  <a :href="app.link" target="_blank" class="text-blue-600 hover:underline text-sm" aria-label="View on store">View</a>
+                </template>
+                <!-- Details button -->
+                <button
+                  class="text-sm underline no-print"
+                  @click="toggleDetails(index)"
+                  :aria-expanded="!!detailsOpen[index]"
+                  :aria-controls="'details-'+index"
+                  x-text="detailsOpen[index] ? 'Hide details' : 'Details'">
+                </button>
+              </div>
+            </div>
 
-            <div class="mt-auto text-sm text-gray-600" x-text="app.tags"></div>
+            <!-- Collapsible detail -->
+            <div
+              x-show="detailsOpen[index]"
+              x-transition
+              class="mt-3 border-t pt-3 text-sm text-gray-700"
+              :id="'details-'+index"
+            >
+              <dl class="grid grid-cols-2 gap-x-4 gap-y-1">
+                <dt class="text-gray-500">Cost</dt>
+                <dd x-text="app.cost || 'Unknown'"></dd>
 
-            <template x-if="app.link">
-              <a :href="app.link" target="_blank" class="mt-3 inline-block text-blue-600 hover:underline text-sm">View</a>
-            </template>
+                <dt class="text-gray-500">Time</dt>
+                <dd x-text="(typeof app.time_min==='number' && app.time_min>0) ? (app.time_min + ' min') : 'Unknown'"></dd>
+
+                <dt class="text-gray-500">Comfort</dt>
+                <dd x-text="app.comfort || 'Unknown'"></dd>
+
+                <dt class="text-gray-500">Motion</dt>
+                <dd x-text="app.motion_level || 'Unknown'"></dd>
+
+                <dt class="text-gray-500">Input</dt>
+                <dd x-text="app.input || 'Unknown'"></dd>
+
+                <dt class="text-gray-500">Devices</dt>
+                <dd x-text="Array.isArray(app.devices) && app.devices.length ? app.devices.join(' • ') : 'Unknown'"></dd>
+
+                <template x-if="app.age">
+                  <template>
+                    <dt class="text-gray-500">Age</dt>
+                    <dd x-text="app.age"></dd>
+                  </template>
+                </template>
+              </dl>
+
+              <template x-if="app.content_notes">
+                <p class="mt-3 text-xs text-gray-600" x-text="'Notes: ' + app.content_notes"></p>
+              </template>
+
+              <template x-if="app.approved !== undefined">
+                <p class="mt-2 text-xs text-gray-600">
+                  <span x-text="app.approved ? '✅ Approved for Lab' : '⏳ Not approved yet'"></span> •
+                  <span x-text="app.installed ? 'Installed' : 'Not installed'"></span>
+                </p>
+              </template>
+
+              <div class="mt-3 flex gap-3">
+                <template x-if="app.link">
+                  <a :href="app.link" target="_blank" class="text-blue-600 hover:underline text-sm">Open store page</a>
+                </template>
+                <button
+                  class="text-sm underline"
+                  @click="navigator.clipboard?.writeText(app.link || window.location.href)">
+                  Copy link
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </template>
@@ -89,57 +231,156 @@
 <script>
   function app() {
     return {
+      // --- base state ---
       DATA_BY_TAB: {},
       sheetNames: [],
       currentTab: '',
       query: '',
       department: '',
-      departmentOptions: [],
-      sortMode: 'default', // 'default' | 'az' | 'za'
+      departmentOptions: [],     // array of names
+      deptCounts: {},            // name -> count
+      sortMode: 'az',            // only 'az' or 'za'
 
-      get apps() {
-        return this.DATA_BY_TAB[this.currentTab] || [];
+      // Saved + UI
+      quickPills: new Set(),
+      savedIds: JSON.parse(localStorage.getItem('xr_saved') || '[]'),
+      savedOnly: false,
+      detailsOpen: {},
+      printMode: false,
+
+      // ---------- helpers ----------
+      get apps() { return this.DATA_BY_TAB[this.currentTab] || []; },
+
+      toText(v) {
+        if (Array.isArray(v)) return v.map(x => this.toText(x)).join(' ');
+        if (v === null || v === undefined) return '';
+        return String(v);
       },
 
+      // Accept department as array OR string
+      parseDepts(val){
+        if (Array.isArray(val)) return val.map(x => String(x).trim()).filter(Boolean);
+        if (typeof val === 'string') return val.split(/[,\|\/;]+/).map(s => s.trim()).filter(Boolean);
+        return [];
+      },
+
+      // Build dropdown options + counts
+      buildDepartmentOptions() {
+        const counts = {};
+        for (const a of this.apps) {
+          for (const d of this.parseDepts(a.department)) {
+            counts[d] = (counts[d] || 0) + 1;
+          }
+        }
+        this.deptCounts = counts;
+        const names = Object.keys(counts);
+        const collator = new Intl.Collator(undefined, { sensitivity: 'base' });
+        names.sort((a,b) => counts[b]-counts[a] || collator.compare(a,b));
+        this.departmentOptions = names;
+      },
+      deptOptionLabel(name){ return `${name} (${this.deptCounts[name] || 0})`; },
+
+      textBlob(app){
+        return [
+          app.title, app.description, app.educational, app.notes,
+          app.tags, app.department
+        ].map(this.toText.bind(this)).join(' ').toLowerCase();
+      },
+
+      // Quick filters (prefer structured fields; fallback to text)
+      facet(app, key){
+        const t = this.textBlob(app);
+        const devices = Array.isArray(app.devices) ? app.devices.join(' ').toLowerCase() : '';
+        const cost = (app.cost || '').toLowerCase();
+        const comfort = (app.comfort || '').toLowerCase();
+        const motion = (app.motion_level || '').toLowerCase();
+        const input = (app.input || '').toLowerCase();
+
+        switch(key){
+          case 'free':        return cost === 'free' || /\bfree\b|no\s*cost/.test(t);
+          case 'short':       return (typeof app.time_min === 'number' && app.time_min <= 15) || /\b(10|12|15)\s*(min|minutes)\b|\bshort\b/.test(t);
+          case 'hands':       return input === 'hands' || input === 'both' || /\bhand(?:s)?\b|hand[-\s]?tracking/.test(t);
+          case 'controllers': return input === 'controllers' || input === 'both' || /\bcontroller(s)?\b|touch controller/.test(t);
+          case 'lowmotion':   return motion === 'low' || (/\bseated\b/.test(t) && !/\b(locomotion|free movement|stick movement)\b/.test(t));
+          case 'quest3':      return /quest\s*3/.test(devices) || /\bquest\s*3\b|meta\s*quest\s*3/.test(t);
+          default: return false;
+        }
+      },
+
+      pillClass(key){ return this.quickPills.has(key) ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-800'; },
+      togglePill(key){ this.quickPills.has(key) ? this.quickPills.delete(key) : this.quickPills.add(key); },
+      clearAll(){
+        this.quickPills.clear();
+        this.query='';
+        this.department='';
+        this.sortMode='az';
+        this.savedOnly=false;
+      },
+
+      appId(app){ return (app.title || '') + '|' + (app.link || ''); },
+      isSaved(app){ return this.savedIds.includes(this.appId(app)); },
+      toggleSave(app){
+        const id = this.appId(app);
+        this.savedIds = this.isSaved(app) ? this.savedIds.filter(x=>x!==id) : [...this.savedIds,id];
+        localStorage.setItem('xr_saved', JSON.stringify(this.savedIds));
+      },
+
+      // NEW: Details toggle
+      toggleDetails(i){
+        this.detailsOpen[i] = !this.detailsOpen[i];
+      },
+
+      // ---------- filtering + sorting ----------
       get filteredApps() {
         const q = this.query.toLowerCase();
 
-        // 1) Filter
+        const matchesPills = (app) => {
+          for (const p of this.quickPills) if (!this.facet(app, p)) return false;
+          return true;
+        };
+        const matchesSaved = (app) => !this.savedOnly || this.isSaved(app);
+
         let out = this.apps.filter(app => {
-          const matchesDept = !this.department || app.department === this.department;
-          const text = Object.values(app).filter(v => typeof v === 'string').join(' ').toLowerCase();
-          const matchesQuery = !q || text.includes(q);
-          return matchesDept && matchesQuery;
+          const appDepts = this.parseDepts(app.department);
+          const matchesDept = !this.department || appDepts.includes(this.department);
+          const matchesQuery = !q || this.textBlob(app).includes(q);
+          return matchesDept && matchesQuery && matchesPills(app) && matchesSaved(app);
         });
 
-        // 2) Sort (without mutating original arrays)
         const collator = new Intl.Collator(undefined, { sensitivity: 'base', numeric: false });
-        if (this.sortMode === 'az') {
-          out = [...out].sort((a, b) => collator.compare((a.title || ''), (b.title || '')));
-        } else if (this.sortMode === 'za') {
+        if (this.sortMode === 'za') {
           out = [...out].sort((a, b) => collator.compare((b.title || ''), (a.title || '')));
         } else {
-          // default/original order preserved via _idx captured on load
-          out = [...out].sort((a, b) => (a._idx ?? 0) - (b._idx ?? 0));
+          out = [...out].sort((a, b) => collator.compare((a.title || ''), (b.title || '')));
         }
         return out;
       },
 
+      // ---------- UI plumbing ----------
       switchTab(tab) {
         this.currentTab = tab;
         this.query = '';
         this.department = '';
-        this.sortMode = 'default';
-        this.refreshDepartments();
+        this.sortMode = 'az';
+        this.quickPills.clear();
+        this.savedOnly = false;
+        this.buildDepartmentOptions();
       },
 
-      refreshDepartments() {
-        const set = new Set(this.apps.map(app => app.department).filter(Boolean));
-        this.departmentOptions = Array.from(set).sort((a, b) =>
-          new Intl.Collator(undefined, { sensitivity: 'base' }).compare(a, b)
-        );
+      a11yInit(){
+        document.querySelectorAll('button, a, input, select').forEach(el=>{
+          el.classList.add('focus:outline-none','focus:ring','focus:ring-blue-300');
+        });
       },
 
+      togglePrintMode(){
+        this.printMode = !this.printMode;
+        const params = new URLSearchParams(window.location.search);
+        if (this.printMode) params.set('print','1'); else params.delete('print');
+        history.replaceState(null, '', `${location.pathname}?${params.toString()}${location.hash}`);
+      },
+
+      // ---------- data load ----------
       async loadData() {
         try {
           const [appsRes, videosRes, webxrRes] = await Promise.all([
@@ -153,7 +394,6 @@
             webxrRes.json()
           ]);
 
-          // Tag each item with an original index so "Default" preserves native order per tab
           const withIndex = arr => arr.map((item, i) => ({ ...item, _idx: i }));
 
           this.DATA_BY_TAB = {
@@ -164,7 +404,12 @@
 
           this.sheetNames = Object.keys(this.DATA_BY_TAB);
           this.currentTab = this.sheetNames[0];
-          this.refreshDepartments();
+          this.buildDepartmentOptions();
+          this.a11yInit();
+
+          if (new URLSearchParams(location.search).get('print') === '1') {
+            this.printMode = true;
+          }
         } catch (err) {
           console.error("Failed to load JSON data:", err);
         }
