@@ -26,6 +26,19 @@
       </p>
     </div>
 
+    <!-- Fixed banner (cannot be closed) directly under header -->
+    <div class="no-print my-4">
+      <div class="rounded-lg border border-amber-300 bg-amber-50 text-amber-900 px-4 py-3 flex items-start gap-3">
+        <span class="text-xl leading-none">🚧</span>
+        <div class="flex-1">
+          <p class="font-semibold">Work in progress</p>
+          <p class="text-sm">
+            This app library is actively being updated. Some items may be missing details or out of date.
+          </p>
+        </div>
+      </div>
+    </div>
+
     <p class="text-sm text-gray-700 mt-2 mb-6">
       <strong>Note:</strong> This list includes apps and XR content that <em>may not currently be installed</em> in the XR Lab. These are curated examples of experiences available for Meta Quest that may be valuable in educational settings.
     </p>
@@ -120,7 +133,7 @@
               </template>
             </div>
 
-            <!-- At-a-glance badges (prefer structured fields) -->
+            <!-- At-a-glance badges -->
             <div class="flex flex-wrap gap-2 mb-3">
               <template x-if="facet(app, 'free')">
                 <span class="text-[11px] px-2 py-0.5 rounded-full border">Free</span>
@@ -325,10 +338,8 @@
         localStorage.setItem('xr_saved', JSON.stringify(this.savedIds));
       },
 
-      // NEW: Details toggle
-      toggleDetails(i){
-        this.detailsOpen[i] = !this.detailsOpen[i];
-      },
+      // Details toggle
+      toggleDetails(i){ this.detailsOpen[i] = !this.detailsOpen[i]; },
 
       // ---------- filtering + sorting ----------
       get filteredApps() {
