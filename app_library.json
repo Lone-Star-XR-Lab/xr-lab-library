@@ -38,8 +38,8 @@
     "devices": ["Quest 3", "Quest 2"],
     "age": "13+",
     "content_notes": null,
-    "approved": false,
-    "installed": false
+    "approved": true,
+    "installed": true
   },
   {
     "title": "Painting VR",
@@ -290,8 +290,8 @@
     "devices": ["Quest 3", "Quest 2", "Quest Pro"],
     "age": "Everyone (0+)",
     "content_notes": null,
-    "approved": false,
-    "installed": false
+    "approved": true,
+    "installed": true
   },
   {
     "title": "Titans of Space PLUS",
@@ -543,8 +543,8 @@
     "devices": ["Quest 3", "Quest 2", "Quest Pro"],
     "age": "Everyone",
     "content_notes": null,
-    "approved": false,
-    "installed": false
+    "approved": true,
+    "installed": true
   },
   {
     "title": "Ovation",
@@ -758,8 +758,8 @@
     "devices": ["Quest 3", "Quest 2", "Quest Pro"],
     "age": "Everyone",
     "content_notes": null,
-    "approved": false,
-    "installed": false
+    "approved": true,
+    "installed": true
   },
   {
     "title": "MLK: Now is the Time",
@@ -779,8 +779,8 @@
     "devices": ["Quest 3", "Quest 2", "Quest Pro"],
     "age": "13+",
     "content_notes": "Includes sensitive social issues (racism, inequality).",
-    "approved": false,
-    "installed": false
+    "approved": true,
+    "installed": true
   },
   {
     "title": "JFK Memento: The Immersive Documentary",
@@ -821,8 +821,8 @@
     "devices": ["Quest 3", "Quest 2", "Quest Pro"],
     "age": "13+",
     "content_notes": "Themes of disability and personal reflection.",
-    "approved": false,
-    "installed": false
+    "approved": true,
+    "installed": true
   },
   {
     "title": "Rome",
