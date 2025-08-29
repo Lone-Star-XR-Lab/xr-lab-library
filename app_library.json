@@ -907,7 +907,51 @@
   "content_notes": null,
   "approved": false,
   "installed": false
+},
+{
+  "title": "Beat Saber",
+  "department": ["Games", "Fine Arts", "Student Life"],
+  "platform": "Meta Quest",
+  "tags": ["Game", "Rhythm", "Music", "Fitness"],
+  "description": "A fast-paced VR rhythm game where players slash blocks to the beat of music using lightsabers.",
+  "educational": "While primarily a game, it can be used in student life programs for recreation, rhythm training, and fitness activities in the lab.",
+  "notes": "Highly popular VR title; supports DLC music packs; frequent updates.",
+  "link": "https://www.meta.com/experiences/beat-saber/2448060205267927/",
+  "logo": "images/apps/beat-saber.jpg",
+  "cost": "Paid ($29.99, DLC packs extra)",
+  "time_min": null,
+  "comfort": "Comfortable",
+  "motion_level": "Medium",
+  "input": "Controllers",
+  "devices": ["Quest 3", "Quest 2", "Quest Pro"],
+  "age": "10+",
+  "content_notes": "Fast-paced gameplay; high physical activity.",
+  "approved": true,
+  "installed": true
+},
+{
+  "title": "Among Us VR",
+  "department": ["Games", "Student Life"],
+  "platform": "Meta Quest",
+  "tags": ["Game", "Multiplayer", "Social Deduction"],
+  "description": "The hit social deduction game reimagined for VR—work together as crewmates to complete tasks, or sabotage and deceive as the Impostor.",
+  "educational": "Primarily recreational, but supports teamwork, communication, and social interaction skills in a group setting.",
+  "notes": "Online multiplayer required; voice chat included.",
+  "link": "https://www.meta.com/experiences/among-us-vr/4227682740639056/",
+  "logo": "images/apps/among-us-vr.jpg",
+  "cost": "Paid ($9.99)",
+  "time_min": null,
+  "comfort": "Moderate",
+  "motion_level": "Medium",
+  "input": "Controllers",
+  "devices": ["Quest 3", "Quest 2", "Quest Pro"],
+  "age": "13+",
+  "content_notes": "Cartoon violence; online interactions.",
+  "approved": true,
+  "installed": true
 }
+
+
 
 
 ]
