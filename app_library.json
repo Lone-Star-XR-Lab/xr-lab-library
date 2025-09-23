@@ -1138,6 +1138,48 @@
   "content_notes": "Short mixed reality onboarding app; cartoon alien characters.",
   "approved": true,
   "installed": true
+},
+{
+  "title": "Quill by Smoothstep",
+  "department": ["Fine Arts", "Media", "Storytelling"],
+  "platform": "PCVR (Quest via Link/Air Link)",
+  "tags": ["Art", "Animation", "Storytelling", "Creation"],
+  "description": "A professional VR painting and animation tool originally developed by Oculus Story Studio, now maintained by Smoothstep. Enables artists to create immersive illustrations and full animated short films in VR.",
+  "educational": "Excellent for advanced media arts and animation programs—teaches VR-native creative workflows, narrative development, and immersive visual design.",
+  "notes": "Free on PCVR; requires a VR-ready computer with Quest Link or Air Link. Not a standalone Quest app.",
+  "link": "https://www.meta.com/experiences/pcvr/quill-by-smoothstep/5910229332328230",
+  "logo": "images/apps/quill-by-smoothstep.jpg",
+  "cost": "Free",
+  "time_min": null,
+  "comfort": "Comfortable",
+  "motion_level": "Low",
+  "input": "Controllers",
+  "devices": ["Quest 3 (via Link/Air Link)", "Quest 2 (via Link/Air Link)", "PCVR headsets"],
+  "age": "13+",
+  "content_notes": "Creation software; requires external PC hardware.",
+  "approved": true,
+  "installed": true
+},
+{
+  "title": "Theater, Elsewhere",
+  "department": ["Fine Arts", "Media", "Storytelling"],
+  "platform": "Meta Quest",
+  "tags": ["Art", "Animation", "Storytelling", "Media"],
+  "description": "The official VR showcase for immersive stories and animations created with Quill. Theater, Elsewhere hosts a collection of narrative VR shorts and experimental art pieces.",
+  "educational": "Valuable for media arts, digital storytelling, and animation education—demonstrates how VR can be used as a medium for narrative and artistic expression.",
+  "notes": "Successor to Quill Theater; free to access on Quest Store.",
+  "link": "https://www.meta.com/experiences/theater-elsewhere/2515021945210953/",
+  "logo": "images/apps/theater-elsewhere.jpg",
+  "cost": "Free",
+  "time_min": null,
+  "comfort": "Comfortable",
+  "motion_level": "Low",
+  "input": "Controllers",
+  "devices": ["Quest 3", "Quest 2", "Quest Pro"],
+  "age": "Everyone",
+  "content_notes": "VR art and storytelling content; experimental narrative works.",
+  "approved": true,
+  "installed": true
 }
 
 
