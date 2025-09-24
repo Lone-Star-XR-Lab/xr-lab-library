@@ -1157,8 +1157,8 @@
   "devices": ["Quest 3 (via Link/Air Link)", "Quest 2 (via Link/Air Link)", "PCVR headsets"],
   "age": "13+",
   "content_notes": "Creation software; requires external PC hardware.",
-  "approved": true,
-  "installed": true
+  "approved": false,
+  "installed": false
 },
 {
   "title": "Theater, Elsewhere",
@@ -1180,7 +1180,29 @@
   "content_notes": "VR art and storytelling content; experimental narrative works.",
   "approved": true,
   "installed": true
+},
+{
+  "title": "Gods of Gravity",
+  "department": ["Games", "STEM", "Student Life"],
+  "platform": "Meta Quest",
+  "tags": ["Game", "Strategy", "Multiplayer", "Space"],
+  "description": "A free VR multiplayer strategy game where players act as gods of gravity, controlling fleets and planets in competitive or cooperative matches.",
+  "educational": "While primarily a game, it can reinforce concepts like orbital mechanics, resource management, and teamwork in a fun way. Great for student engagement and casual esports.",
+  "notes": "Free-to-play; supports online multiplayer; designed for quick matches and competitive play.",
+  "link": "https://www.meta.com/experiences/gods-of-gravity/3766014526783558/",
+  "logo": "images/apps/gods-of-gravity.jpg",
+  "cost": "Free",
+  "time_min": null,
+  "comfort": "Comfortable",
+  "motion_level": "Low",
+  "input": "Controllers",
+  "devices": ["Quest 3", "Quest 2", "Quest Pro"],
+  "age": "10+",
+  "content_notes": "Multiplayer competition; sci-fi space battles.",
+  "approved": true,
+  "installed": true
 }
+
 
 
 
