@@ -6,28 +6,19 @@
   <title>Lone Star XR Lab - App Library</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <style>
-    @media print {
-      body { background: #fff !important; color: #000 !important; }
-      .no-print { display: none !important; }
-      .grid { display: block !important; }
-      .grid > * { break-inside: avoid; margin-bottom: 1rem; }
-      .shadow-sm, .shadow, .shadow-lg { box-shadow: none !important; }
-    }
-  </style>
 </head>
 <body class="bg-gray-50 text-gray-900" x-data="app()" x-init="loadData()">
   <div class="max-w-7xl mx-auto px-4 py-6">
     <!-- Header -->
     <div class="flex items-start justify-between gap-3">
       <h1 class="text-3xl font-bold">Lone Star XR Lab - App Library</h1>
-      <p class="text-xs text-gray-500 no-print">
+      <p class="text-xs text-gray-500">
         <span class="underline decoration-dotted cursor-help" title="XR is an umbrella term for VR, AR, and MR.">What is XR?</span>
       </p>
     </div>
 
     <!-- Fixed banner -->
-    <div class="no-print my-4">
+    <div class="my-4">
       <div class="rounded-lg border border-blue-300 bg-blue-50 text-blue-900 px-4 py-3">
         <p class="font-semibold">Only showing apps that are <em>Approved</em> or <em>Installed</em>.</p>
         <p class="text-sm">Items with both <code>approved: false</code> and <code>installed: false</code> are hidden.</p>
@@ -35,7 +26,7 @@
     </div>
 
     <!-- Controls -->
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-3 no-print" x-show="apps.length">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-3" x-show="apps.length">
       <div class="md:col-span-2">
         <label class="block text-xs text-gray-600 mb-1">Department</label>
         <select x-model="department" class="w-full border px-3 py-2 rounded-md shadow-sm">
@@ -65,7 +56,7 @@
     </div>
 
     <!-- Quick filters -->
-    <div class="flex flex-wrap items-center gap-2 mb-5 no-print" x-show="apps.length">
+    <div class="flex flex-wrap items-center gap-2 mb-5" x-show="apps.length">
       <span class="text-sm font-semibold text-gray-700">Quick filters:</span>
       <button @click="togglePill('free')"      :class="pillClass('free')"      class="px-3 py-1.5 rounded-full text-sm border">Free</button>
       <button @click="togglePill('short')"     :class="pillClass('short')"     class="px-3 py-1.5 rounded-full text-sm border">≤ 15 min</button>
@@ -118,7 +109,7 @@
               <div class="text-xs text-gray-600 truncate" x-text="Array.isArray(app.tags) ? app.tags.join(', ') : (app.tags || '')"></div>
               <div class="flex items-center gap-3">
                 <template x-if="app.link"><a :href="app.link" target="_blank" class="text-blue-600 hover:underline text-sm">View</a></template>
-                <button class="text-sm underline no-print" @click="toggleDetails(index)" :aria-expanded="!!detailsOpen[index]" :aria-controls="'details-'+index" x-text="detailsOpen[index] ? 'Hide details' : 'Details'"></button>
+                <button class="text-sm underline" @click="toggleDetails(index)" :aria-expanded="!!detailsOpen[index]" :aria-controls="'details-'+index" x-text="detailsOpen[index] ? 'Hide details' : 'Details'"></button>
               </div>
             </div>
 
@@ -160,8 +151,6 @@ function app(){
     DATA: [],
     query: '',
     department: '',
-    departmentOptions: [],
-    deptCounts: {},
     sortMode: 'az',
     quickPills: new Set(),
     detailsOpen: {},
@@ -172,14 +161,30 @@ function app(){
     toText(v){ if(Array.isArray(v)) return v.map(this.toText.bind(this)).join(' '); return v==null?'':String(v); },
     parseDepts(v){ if(Array.isArray(v)) return v.map(x=>String(x).trim()).filter(Boolean); if(typeof v==='string') return v.split(/[,\|\/;]+/).map(s=>s.trim()).filter(Boolean); return []; },
 
-    buildDepartmentOptions(){
+    get baseFiltered(){
+      const q=this.query.toLowerCase();
+      const matchesPills=(app)=>{ for(const pill of this.quickPills) if(!this.facet(app,pill)) return false; return true; };
+      return this.apps
+        .filter(a => this.visibleInLibrary(a))
+        .filter(matchesPills)
+        .filter(a => !this.approvedOnly || a.approved === true)
+        .filter(a => !this.installedOnly || a.installed === true)
+        .filter(a => !q || this.textBlob(a).includes(q));
+    },
+    get deptCounts(){
       const counts={};
-      for(const a of this.apps){ for(const d of this.parseDepts(a.department)){ counts[d]=(counts[d]||0)+1; } }
-      this.deptCounts = counts;
-      const names = Object.keys(counts);
-      const collator = new Intl.Collator(undefined, {sensitivity:'base'});
-      names.sort((a,b)=>counts[b]-counts[a] || collator.compare(a,b));
-      this.departmentOptions = names;
+      for(const app of this.baseFiltered){
+        for(const dept of this.parseDepts(app.department)){
+          counts[dept]=(counts[dept]||0)+1;
+        }
+      }
+      return counts;
+    },
+    get departmentOptions(){
+      const counts=this.deptCounts;
+      const names=Object.keys(counts);
+      const collator=new Intl.Collator(undefined,{sensitivity:'base'});
+      return names.sort((a,b)=>counts[b]-counts[a] || collator.compare(a,b));
     },
     deptOptionLabel(n){ return `${n} (${this.deptCounts[n]||0})`; },
 
@@ -211,22 +216,10 @@ function app(){
     visibleInLibrary(app){ return !!(app && (app.approved === true || app.installed === true)); },
 
     get filteredApps(){
-      const q=this.query.toLowerCase();
-      let out=this.apps.filter(a => this.visibleInLibrary(a));
-      const matchesPills = (a)=>{ for(const p of this.quickPills) if(!this.facet(a,p)) return false; return true; };
-      out = out.filter(a => matchesPills(a));
-
-      // Optional extra narrowing (within the visible set)
-      if(this.approvedOnly) out = out.filter(a => a.approved === true);
-      if(this.installedOnly) out = out.filter(a => a.installed === true);
-
-      // Department + search
-      out = out.filter(a => {
-        const depts=this.parseDepts(a.department);
-        const matchesDept=!this.department || depts.includes(this.department);
-        const matchesQuery=!q || this.textBlob(a).includes(q);
-        return matchesDept && matchesQuery;
-      });
+      let out=this.baseFiltered;
+      if(this.department){
+        out = out.filter(a => this.parseDepts(a.department).includes(this.department));
+      }
 
       const collator=new Intl.Collator(undefined,{sensitivity:'base'});
       out=[...out].sort((a,b)=> this.sortMode==='za'
@@ -249,7 +242,6 @@ function app(){
         }));
 
         this.DATA = data;
-        this.buildDepartmentOptions();
       }catch(e){ console.error('Failed to load app_library.json', e); }
     }
   }
