@@ -147,73 +147,85 @@
 
               <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                 <template x-for="(app, index) in filteredApps" :key="index">
-                  <div class="bg-white border rounded-xl shadow-sm overflow-hidden flex flex-col">
-                    <template x-if="app.logo"><img :src="app.logo" alt="" class="h-44 object-cover w-full" loading="lazy" width="640" height="176"></template>
-
-                    <div class="p-4 flex-1 flex flex-col">
-                      <div class="flex items-start gap-2">
-                        <h2 class="text-lg font-semibold flex-1 leading-snug" x-text="app.title"></h2>
+                  <div class="group rounded-2xl bg-gradient-to-br from-slate-100 via-white to-white p-[1px] shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+                    <article class="h-full rounded-[1.15rem] bg-white flex flex-col overflow-hidden">
+                      <div class="relative h-44 bg-slate-900/5">
+                        <template x-if="app.logo">
+                          <img :src="app.logo" alt="" class="absolute inset-0 h-full w-full object-cover" loading="lazy" width="640" height="176">
+                        </template>
+                        <template x-if="!app.logo">
+                          <div class="flex h-full w-full items-center justify-center text-3xl font-semibold text-slate-400" x-text="(app.title || '?').split(/\\s+/).map(word => word?.charAt(0) || '').join('').slice(0,2).toUpperCase() || '?'"></div>
+                        </template>
                         <template x-if="app.approved || app.installed">
-                          <span class="text-xs rounded px-2 py-1 border"
-                                :class="app.installed ? 'border-green-300 text-green-800 bg-green-50' : 'border-blue-300 text-blue-800 bg-blue-50'"
+                          <span class="absolute top-3 left-3 inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-wide backdrop-blur"
+                                :class="app.installed ? 'border-green-200 bg-green-50/90 text-green-900' : 'border-blue-200 bg-blue-50/90 text-blue-900'"
                                 x-text="app.installed ? 'Installed' : 'Approved'"></span>
                         </template>
                       </div>
 
-                      <div class="flex flex-wrap gap-2 mt-2 mb-3">
-                        <template x-for="d in parseDepts(app.department)" :key="d">
-                          <span class="text-xs px-2 py-0.5 rounded-full border text-gray-700" x-text="d"></span>
-                        </template>
-                      </div>
+                      <div class="flex-1 p-5 flex flex-col gap-4">
+                        <div>
+                          <h2 class="text-lg font-semibold leading-snug text-slate-900" x-text="app.title"></h2>
+                          <p class="text-xs text-slate-500 mt-1" x-text="Array.isArray(app.devices) && app.devices.length ? app.devices.join(', ') : 'Devices TBD'"></p>
+                        </div>
 
-                      <div class="flex flex-wrap gap-2 mb-3">
-                        <template x-if="facet(app, 'free')"><span class="text-[11px] px-2 py-0.5 rounded-full border">Free</span></template>
-                        <template x-if="typeof app.time_min==='number' && app.time_min>0">
-                          <span class="text-[11px] px-2 py-0.5 rounded-full border" x-text="'Time: ' + app.time_min + ' min'"></span>
-                        </template>
-                        <template x-if="(app.input || facet(app,'hands') || facet(app,'controllers'))">
-                          <span class="text-[11px] px-2 py-0.5 rounded-full border" x-text="'Input: ' + (app.input || (facet(app,'hands')?'Hands':(facet(app,'controllers')?'Controllers':'-')))"></span>
-                        </template>
-                        <template x-if="(app.comfort || facet(app,'seated') || facet(app,'room') || facet(app,'standing'))">
-                          <span class="text-[11px] px-2 py-0.5 rounded-full border" x-text="'Comfort: ' + (app.comfort || (facet(app,'seated')?'Seated':(facet(app,'room')?'Room-scale':(facet(app,'standing')?'Standing':'Unknown'))))"></span>
-                        </template>
-                      </div>
+                        <div class="flex flex-wrap gap-1.5">
+                          <template x-for="d in parseDepts(app.department)" :key="d">
+                            <span class="text-[11px] font-medium px-2.5 py-1 rounded-full bg-slate-50 border border-slate-200 text-slate-700" x-text="d"></span>
+                          </template>
+                        </div>
 
-                      <template x-if="app.description"><p class="text-sm text-gray-800 mb-2" x-text="app.description"></p></template>
-                      <template x-if="app.educational"><p class="text-sm text-blue-900 italic mb-2">Educational highlight: <span x-text="app.educational"></span></p></template>
+                        <div class="flex flex-wrap gap-2 text-[11px] font-medium text-slate-600">
+                          <template x-if="facet(app, 'free')"><span class="pill">Free</span></template>
+                          <template x-if="typeof app.time_min==='number' && app.time_min>0">
+                            <span class="pill" x-text="'Time | ' + app.time_min + ' min'"></span>
+                          </template>
+                          <template x-if="(app.input || facet(app,'hands') || facet(app,'controllers'))">
+                            <span class="pill" x-text="'Input | ' + (app.input || (facet(app,'hands')?'Hands':(facet(app,'controllers')?'Controllers':'-')))"></span>
+                          </template>
+                          <template x-if="(app.comfort || facet(app,'seated') || facet(app,'room') || facet(app,'standing'))">
+                            <span class="pill" x-text="'Comfort | ' + (app.comfort || (facet(app,'seated')?'Seated':(facet(app,'room')?'Room-scale':(facet(app,'standing')?'Standing':'Unknown'))))"></span>
+                          </template>
+                        </div>
 
-                      <div class="mt-auto flex items-center justify-between">
-                        <div class="text-xs text-gray-600 truncate" x-text="Array.isArray(app.tags) ? app.tags.join(', ') : (app.tags || '')"></div>
-                        <div class="flex items-center gap-3">
-                          <template x-if="app.link"><a :href="app.link" target="_blank" class="text-blue-600 hover:underline text-sm">View</a></template>
-                          <button class="text-sm underline" @click="toggleDetails(index)" :aria-expanded="!!detailsOpen[index]" :aria-controls="'details-'+index" x-text="detailsOpen[index] ? 'Hide details' : 'Details'"></button>
+                        <template x-if="app.description"><p class="text-sm text-slate-800" x-text="app.description"></p></template>
+                        <template x-if="app.educational"><p class="text-sm text-blue-900 italic">Educational highlight: <span x-text="app.educational"></span></p></template>
+
+                        <div class="mt-auto flex flex-wrap items-center gap-3">
+                          <div class="text-xs text-slate-500 truncate flex-1 min-w-[140px]" x-text="Array.isArray(app.tags) ? app.tags.join(', ') : (app.tags || '')"></div>
+                          <div class="flex items-center gap-2 shrink-0">
+                            <template x-if="app.link">
+                              <a :href="app.link" target="_blank" class="btn btn-secondary">Open app</a>
+                            </template>
+                            <button class="btn btn-ghost text-sm font-semibold" @click="toggleDetails(index)" :aria-expanded="!!detailsOpen[index]" :aria-controls="'details-'+index" x-text="detailsOpen[index] ? 'Hide details' : 'Details'"></button>
+                          </div>
+                        </div>
+
+                        <div x-show="detailsOpen[index]" x-transition class="card-details text-sm text-slate-800" :id="'details-'+index">
+                          <dl class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                            <dt class="text-slate-500">Cost</dt><dd x-text="app.cost || 'Unknown'"></dd>
+                            <dt class="text-slate-500">Time</dt><dd x-text="(typeof app.time_min==='number' && app.time_min>0) ? (app.time_min + ' min') : 'Unknown'"></dd>
+                            <dt class="text-slate-500">Comfort</dt><dd x-text="app.comfort || 'Unknown'"></dd>
+                            <dt class="text-slate-500">Motion</dt><dd x-text="app.motion_level || 'Unknown'"></dd>
+                            <dt class="text-slate-500">Input</dt><dd x-text="app.input || 'Unknown'"></dd>
+                            <dt class="text-slate-500">Devices</dt><dd x-text="Array.isArray(app.devices) && app.devices.length ? app.devices.join(', ') : 'Unknown'"></dd>
+                            <template x-if="app.age"><template><dt class="text-slate-500">Age</dt><dd x-text="app.age"></dd></template></template>
+                          </dl>
+
+                          <template x-if="app.content_notes"><p class="mt-3 text-xs text-slate-600" x-text="'Notes: ' + app.content_notes"></p></template>
+
+                          <p class="mt-2 text-xs text-slate-600 flex flex-wrap gap-4">
+                            <span x-text="'Approved: ' + (app.approved ? 'Yes' : 'No')"></span>
+                            <span x-text="'Installed: ' + (app.installed ? 'Yes' : 'No')"></span>
+                          </p>
+
+                          <div class="mt-3 flex flex-wrap gap-3">
+                            <template x-if="app.link"><a :href="app.link" target="_blank" class="text-sm font-semibold text-blue-600 hover:text-blue-700">Open store page</a></template>
+                            <button class="text-sm font-semibold text-slate-600 hover:text-slate-800" @click="navigator.clipboard?.writeText(app.link || window.location.href)">Copy link</button>
+                          </div>
                         </div>
                       </div>
-
-                      <div x-show="detailsOpen[index]" x-transition class="mt-3 border-t pt-3 text-sm text-gray-700" :id="'details-'+index">
-                        <dl class="grid grid-cols-2 gap-x-4 gap-y-1">
-                          <dt class="text-gray-500">Cost</dt><dd x-text="app.cost || 'Unknown'"></dd>
-                          <dt class="text-gray-500">Time</dt><dd x-text="(typeof app.time_min==='number' && app.time_min>0) ? (app.time_min + ' min') : 'Unknown'"></dd>
-                          <dt class="text-gray-500">Comfort</dt><dd x-text="app.comfort || 'Unknown'"></dd>
-                          <dt class="text-gray-500">Motion</dt><dd x-text="app.motion_level || 'Unknown'"></dd>
-                          <dt class="text-gray-500">Input</dt><dd x-text="app.input || 'Unknown'"></dd>
-                          <dt class="text-gray-500">Devices</dt><dd x-text="Array.isArray(app.devices) && app.devices.length ? app.devices.join(', ') : 'Unknown'"></dd>
-                          <template x-if="app.age"><template><dt class="text-gray-500">Age</dt><dd x-text="app.age"></dd></template></template>
-                        </dl>
-
-                        <template x-if="app.content_notes"><p class="mt-3 text-xs text-gray-600" x-text="'Notes: ' + app.content_notes"></p></template>
-
-                        <p class="mt-2 text-xs text-gray-600">
-                          <span x-text="'Approved: ' + (app.approved ? 'Yes' : 'No')"></span>
-                          <span class="ml-4" x-text="'Installed: ' + (app.installed ? 'Yes' : 'No')"></span>
-                        </p>
-
-                        <div class="mt-3 flex gap-3">
-                          <template x-if="app.link"><a :href="app.link" target="_blank" class="text-blue-600 hover:underline text-sm">Open store page</a></template>
-                          <button class="text-sm underline" @click="navigator.clipboard?.writeText(app.link || window.location.href)">Copy link</button>
-                        </div>
-                      </div>
-                    </div>
+                    </article>
                   </div>
                 </template>
               </div>
@@ -246,48 +258,58 @@
                     </template>
                   </select>
                 </div>
-                <div>
-                  <label class="block text-xs text-gray-600 mb-1">Sort</label>
-                  <select x-model="videoSortMode" class="w-full border px-3 py-2 rounded-md shadow-sm text-sm">
-                    <option value="az">Title A-Z</option>
-                    <option value="za">Title Z-A</option>
-                  </select>
-                </div>
               </div>
             </aside>
             <div class="lg:col-span-8 xl:col-span-9">
               <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                 <span class="text-sm text-gray-500" x-text="filteredVideos.length + ' results'"></span>
+                <div class="flex items-center gap-2">
+                  <label class="text-xs text-gray-600">Sort</label>
+                  <select x-model="videoSortMode" class="border px-3 py-2 rounded-md shadow-sm text-sm">
+                    <option value="az">Title A-Z</option>
+                    <option value="za">Title Z-A</option>
+                  </select>
+                </div>
               </div>
               <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                 <template x-for="(video, vIndex) in filteredVideos" :key="'video-'+vIndex">
-                  <div class="bg-white border rounded-xl shadow-sm overflow-hidden flex flex-col">
-                    <template x-if="video.logo"><img :src="video.logo" alt="" class="h-44 object-cover w-full" loading="lazy" width="640" height="176"></template>
-
-                    <div class="p-4 flex-1 flex flex-col">
-                      <h2 class="text-lg font-semibold leading-snug" x-text="video.title"></h2>
-
-                      <div class="flex flex-wrap gap-2 mt-2 mb-3">
-                        <template x-for="dept in parseDepts(video.department)" :key="dept">
-                          <span class="text-xs px-2 py-0.5 rounded-full border text-gray-700" x-text="dept"></span>
+                  <div class="group rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-white p-[1px] shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+                    <article class="h-full rounded-[1.15rem] bg-white flex flex-col overflow-hidden">
+                      <div class="relative h-44 bg-indigo-900/5">
+                        <template x-if="video.logo">
+                          <img :src="video.logo" alt="" class="absolute inset-0 h-full w-full object-cover" loading="lazy" width="640" height="176">
+                        </template>
+                        <template x-if="!video.logo">
+                          <div class="flex h-full w-full items-center justify-center text-2xl font-semibold text-indigo-200 bg-gradient-to-br from-indigo-500/50 to-slate-900/50 text-opacity-90" x-text="(video.title || '?').split(/\\s+/).map(word => word?.charAt(0) || '').join('').slice(0,2).toUpperCase() || '?'"></div>
                         </template>
                         <template x-if="video.platform">
-                          <span class="text-[11px] px-2 py-0.5 rounded-full border border-purple-200 bg-purple-50 text-purple-700" x-text="video.platform"></span>
+                          <span class="absolute top-3 left-3 inline-flex items-center rounded-full border border-indigo-200 bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-indigo-900" x-text="video.platform"></span>
                         </template>
                       </div>
 
-                      <template x-if="video.description"><p class="text-sm text-gray-800 mb-2" x-text="video.description"></p></template>
-                      <template x-if="video.educational"><p class="text-sm text-blue-900 italic mb-2" x-text="video.educational"></p></template>
-                      <template x-if="video.tags"><p class="text-xs text-gray-600 mb-2" x-text="video.tags"></p></template>
-                      <template x-if="video.notes"><p class="text-xs text-gray-500 mb-3" x-text="video.notes"></p></template>
+                      <div class="p-5 flex-1 flex flex-col gap-3">
+                        <div>
+                          <h2 class="text-lg font-semibold leading-snug text-slate-900" x-text="video.title"></h2>
+                          <div class="flex flex-wrap gap-1.5 mt-2">
+                            <template x-for="dept in parseDepts(video.department)" :key="dept">
+                              <span class="text-[11px] font-medium px-2.5 py-1 rounded-full bg-slate-50 border border-slate-200 text-slate-700" x-text="dept"></span>
+                            </template>
+                          </div>
+                        </div>
 
-                      <div class="mt-auto flex items-center justify-between">
-                        <div class="text-xs text-gray-500 truncate" x-text="video.link ? video.link : 'No external link provided'"></div>
-                        <div class="flex items-center gap-3">
-                          <template x-if="video.link"><a :href="video.link" target="_blank" class="text-blue-600 hover:underline text-sm">Watch</a></template>
+                        <template x-if="video.description"><p class="text-sm text-slate-800" x-text="video.description"></p></template>
+                        <template x-if="video.educational"><p class="text-sm text-indigo-900 italic" x-text="video.educational"></p></template>
+                        <template x-if="video.tags"><p class="text-xs text-slate-600" x-text="video.tags"></p></template>
+                        <template x-if="video.notes"><p class="text-xs text-slate-500" x-text="video.notes"></p></template>
+
+                        <div class="mt-auto flex flex-wrap items-center gap-3">
+                          <div class="text-xs text-slate-500 truncate flex-1 min-w-[140px]" x-text="video.link ? video.link : 'No external link provided'"></div>
+                          <template x-if="video.link">
+                            <a :href="video.link" target="_blank" class="btn btn-primary">Watch now</a>
+                          </template>
                         </div>
                       </div>
-                    </div>
+                    </article>
                   </div>
                 </template>
               </div>
