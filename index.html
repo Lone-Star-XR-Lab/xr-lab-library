@@ -18,13 +18,6 @@
       </p>
     </div>
 
-    <div class="my-4">
-      <div class="rounded-lg border border-blue-300 bg-blue-50 text-blue-900 px-4 py-3">
-        <p class="font-semibold">Only showing apps that are <em>Approved</em> or <em>Installed</em>.</p>
-        <p class="text-sm">Items with both <code>approved: false</code> and <code>installed: false</code> are hidden.</p>
-      </div>
-    </div>
-
     <div class="mt-6">
       <div class="flex items-center gap-2 border-b border-gray-200 pb-1 mb-4">
         <button type="button"
@@ -145,9 +138,9 @@
                 </div>
               </div>
 
-              <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-2">
                 <template x-for="(app, index) in filteredApps" :key="index">
-                  <div class="group rounded-2xl bg-gradient-to-br from-slate-100 via-white to-white p-[1px] shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+                  <div class="group rounded-2xl bg-gradient-to-br from-slate-100 via-white to-white p-[1px] shadow-sm transition hover:shadow-lg">
                     <article class="h-full rounded-[1.15rem] bg-white flex flex-col overflow-hidden">
                       <div class="relative h-44 bg-slate-900/5">
                         <template x-if="app.logo">
@@ -271,9 +264,9 @@
                   </select>
                 </div>
               </div>
-              <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-2">
                 <template x-for="(video, vIndex) in filteredVideos" :key="'video-'+vIndex">
-                  <div class="group rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-white p-[1px] shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+                  <div class="group rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-white p-[1px] shadow-sm transition hover:shadow-lg">
                     <article class="h-full rounded-[1.15rem] bg-white flex flex-col overflow-hidden">
                       <div class="relative h-44 bg-indigo-900/5">
                         <template x-if="video.logo">
