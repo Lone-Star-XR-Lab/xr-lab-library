@@ -15,10 +15,38 @@ function app(){
     approvedOnly: false,
     installedOnly: false,
     selectedDepartments: new Set(),
+    selectedDurableSkills: new Set(),
     selectedComfort: new Set(),
     selectedInput: new Set(),
     selectedDevices: new Set(),
     selectedAge: new Set(),
+    skillDefinitions: {
+      'adaptability': 'Adjusting to new tools, environments, feedback, or changing conditions without losing momentum.',
+      'collaboration': 'Working productively with others to plan, build, review, or learn together toward a shared goal.',
+      'communication': 'Expressing ideas clearly so other people can understand, respond, and act on them.',
+      'creative expression': 'Using artistic or imaginative choices to communicate ideas, perspectives, or emotions.',
+      'critical thinking': 'Evaluating information, assumptions, and evidence to make sound judgments or interpretations.',
+      'cultural awareness': 'Recognizing how history, identity, context, and lived experience shape people and communities.',
+      'decision-making': 'Choosing a course of action by weighing options, tradeoffs, timing, and consequences.',
+      'design thinking': 'Exploring problems through user needs, iteration, prototyping, and intentional design choices.',
+      'digital fluency': 'Using digital tools confidently and understanding how to navigate interactive technology effectively.',
+      'empathy': 'Understanding another person’s perspective, feelings, or lived experience and responding thoughtfully.',
+      'problem solving': 'Identifying challenges, testing approaches, and improving solutions when something is unclear or broken.',
+      'professional communication': 'Communicating in a clear, appropriate, and audience-aware way for academic or workplace settings.',
+      'public speaking': 'Presenting ideas aloud with clarity, confidence, pacing, and awareness of an audience.',
+      'scientific observation': 'Noticing patterns, structures, behaviors, or evidence carefully in order to support inquiry and analysis.',
+      'self-awareness': 'Recognizing your own emotions, habits, strengths, and limits while working or learning.',
+      'self-confidence': 'Trusting your ability to participate, present, practice, and improve through repeated effort.',
+      'self-directed learning': 'Taking initiative to explore, practice, and build understanding without constant external direction.',
+      'self-management': 'Managing focus, effort, emotions, and behavior in order to work effectively and persist.',
+      'self-reflection': 'Looking back on your performance or experience to identify what worked, what did not, and what to change.',
+      'situational awareness': 'Reading the environment, timing, and other people’s actions so you can respond effectively in the moment.',
+      'spatial reasoning': 'Understanding how objects, layouts, movement, and scale relate in three-dimensional space.',
+      'systems thinking': 'Seeing how parts of a process or system interact and how changes in one area affect another.',
+      'teamwork': 'Contributing responsibly within a group by coordinating roles, actions, and support for others.',
+      'technical literacy': 'Understanding how technical systems, interfaces, or tools function well enough to use them purposefully.',
+      'visual communication': 'Using images, layouts, forms, and visual choices to convey meaning clearly.'
+    },
     get apps(){ return this.DATA; },
 
     toText(value){
@@ -74,6 +102,7 @@ function app(){
     facetRawValues(app, group){
       switch(group){
         case 'departments': return this.parseDepts(app.department);
+        case 'durableSkills': return this.parseList(app.durable_skills);
         case 'comfort': return this.parseList(app.comfort);
         case 'input': return this.parseList(app.input);
         case 'devices': return this.parseList(app.devices);
@@ -95,6 +124,7 @@ function app(){
     facetSet(name){
       switch(name){
         case 'departments': return this.selectedDepartments;
+        case 'durableSkills': return this.selectedDurableSkills;
         case 'comfort': return this.selectedComfort;
         case 'input': return this.selectedInput;
         case 'devices': return this.selectedDevices;
@@ -112,6 +142,7 @@ function app(){
       }
       switch(name){
         case 'departments': this.selectedDepartments = new Set(set); break;
+        case 'durableSkills': this.selectedDurableSkills = new Set(set); break;
         case 'comfort': this.selectedComfort = new Set(set); break;
         case 'input': this.selectedInput = new Set(set); break;
         case 'devices': this.selectedDevices = new Set(set); break;
@@ -126,6 +157,7 @@ function app(){
     get facetOptions(){
       const buckets = {
         departments: new Map(),
+        durableSkills: new Map(),
         comfort: new Map(),
         input: new Map(),
         devices: new Map(),
@@ -144,6 +176,7 @@ function app(){
       const basePool = this.baseCandidates();
       for(const app of basePool){
         addEntries(buckets.departments, this.facetValuesForApp(app,'departments'));
+        addEntries(buckets.durableSkills, this.facetValuesForApp(app,'durableSkills'));
         addEntries(buckets.comfort, this.facetValuesForApp(app,'comfort'));
         addEntries(buckets.input, this.facetValuesForApp(app,'input'));
         addEntries(buckets.devices, this.facetValuesForApp(app,'devices'));
@@ -153,6 +186,7 @@ function app(){
       const toList = map => Array.from(map.values()).sort((a,b)=> b.count - a.count || collator.compare(a.label,b.label));
       return {
         departments: toList(buckets.departments),
+        durableSkills: toList(buckets.durableSkills),
         comfort: toList(buckets.comfort),
         input: toList(buckets.input),
         devices: toList(buckets.devices),
@@ -162,14 +196,76 @@ function app(){
 
     clearFacetSelections(){
       this.selectedDepartments = new Set();
+      this.selectedDurableSkills = new Set();
       this.selectedComfort = new Set();
       this.selectedInput = new Set();
       this.selectedDevices = new Set();
       this.selectedAge = new Set();
     },
 
+    skillDefinition(skill){
+      const key = this.toText(skill).trim().toLowerCase();
+      return this.skillDefinitions[key] || 'A transferable skill that can support learning, collaboration, or workplace readiness across different contexts.';
+    },
+    metaExperienceId(link){
+      const raw = this.toText(link).trim();
+      if(!raw) return '';
+      const match = raw.match(/\/experiences\/(?:pcvr\/)?(?:[^\/]+\/)?(\d{6,})\/?$/i)
+        || raw.match(/\/experiences\/(\d{6,})\/?$/i);
+      return match ? match[1] : '';
+    },
+    storeLink(app){
+      const raw = this.toText(app?.link).trim();
+      if(!raw) return '';
+      const experienceId = this.metaExperienceId(raw);
+      if(experienceId){
+        return `https://www.meta.com/en-us/experiences/${experienceId}/`;
+      }
+      if(/^https?:\/\/www\.meta\.com\//i.test(raw)){
+        return raw.replace(/^https?:\/\/www\.meta\.com\/(?:[a-z]{2}-[a-z]{2}\/)?/i,'https://www.meta.com/en-us/');
+      }
+      return raw;
+    },
+    primaryDepartment(app){
+      const departments = this.parseDepts(app?.department);
+      return departments[0] || 'General';
+    },
+    classroomSummary(app){
+      const parts = [];
+      if(typeof app?.time_min === 'number' && app.time_min > 0){
+        parts.push(`${app.time_min} min`);
+      }else{
+        parts.push('Flexible length');
+      }
+      if(app?.comfort){
+        parts.push(String(app.comfort));
+      }
+      if(app?.input){
+        parts.push(String(app.input));
+      }
+      return parts.join(' • ');
+    },
+    classroomUse(app){
+      const text = this.textBlob(app);
+      if(/\bonboarding\b|first[-\s]?time|first steps|first contact|demo/.test(text)) return 'Best for first-time users';
+      if(typeof app?.time_min === 'number' && app.time_min <= 20) return 'Good for a quick class activity';
+      if(/\bcollaboration\b|team|multiplayer|multi-user|social/.test(text)) return 'Works well for pairs or groups';
+      if(/\btraining\b|practice|presentation|public speaking|cpr|simulation/.test(text)) return 'Strong for guided practice';
+      if(/\bexplore\b|field trip|tour|documentary|museum|history/.test(text)) return 'Good for guided exploration';
+      return 'Useful for guided classroom use';
+    },
+    cardBadges(app){
+      const badges = [];
+      if(app?.installed === true) badges.push({ label: 'Installed', tone: 'green' });
+      else if(app?.approved === true) badges.push({ label: 'Approved', tone: 'blue' });
+      if(this.facet(app, 'free')) badges.push({ label: 'Free', tone: 'slate' });
+      if(typeof app?.time_min === 'number' && app.time_min > 0) badges.push({ label: `${app.time_min} min`, tone: 'slate' });
+      else badges.push({ label: 'Flexible length', tone: 'slate' });
+      return badges.slice(0, 3);
+    },
+
     textBlob(app){
-      return [app.title, app.description, app.educational, app.notes, app.tags, app.department]
+      return [app.title, app.description, app.educational, app.notes, app.tags, app.department, app.durable_skills]
         .map(this.toText.bind(this)).join(' ').toLowerCase();
     },
     facet(app,key){
@@ -226,7 +322,7 @@ function app(){
 
     get filteredApps(){
       let out = this.baseFiltered;
-      for(const group of ['departments','comfort','input','devices','age']){
+      for(const group of ['departments','durableSkills','comfort','input','devices','age']){
         const set = this.facetSet(group);
         if(set && set.size){
           out = out.filter(app => this.matchesFacetSelection(app, group));

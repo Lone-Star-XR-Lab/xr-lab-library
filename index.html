@@ -11,9 +11,25 @@
 </head>
 <body class="bg-gray-50 text-gray-900" x-data="app()" x-init="loadData()">
   <div class="max-w-7xl mx-auto px-4 py-6">
-    <div class="flex items-start justify-between gap-3">
-      <h1 class="text-3xl font-bold">Lone Star XR Lab - App Library</h1>
-      <p class="text-xs text-gray-500">
+    <div class="flex items-start justify-between gap-6">
+      <div class="min-w-0">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
+          <img
+            src="images/logo/XR Lab Logo_Black.png"
+            alt="Lone Star XR Lab"
+            class="h-24 w-auto sm:h-28"
+            width="448"
+            height="112"
+          >
+          <h1 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+            App Library
+          </h1>
+        </div>
+        <p class="mt-2 max-w-3xl text-base leading-7 text-slate-600">
+          This library shows the XR apps we have already reviewed for lab use. These are apps that are currently installed, approved for use, or actively being used in the lab.
+        </p>
+      </div>
+      <p class="pt-1 text-xs text-gray-500">
         <span class="underline decoration-dotted cursor-help" title="XR is an umbrella term for VR, AR, and MR.">What is XR?</span>
       </p>
     </div>
@@ -46,7 +62,7 @@
               <div class="bg-white border rounded-xl shadow-sm p-4 space-y-6">
                 <div>
                   <label class="block text-xs text-gray-600 mb-1">Search</label>
-                  <input type="text" x-model="query" placeholder="Title, notes, tags."
+                  <input type="text" x-model="query" placeholder="Title, notes, tags, skills."
                          class="w-full border px-3 py-2 rounded-md shadow-sm">
                 </div>
                 <div class="grid grid-cols-2 gap-2 text-sm">
@@ -73,6 +89,21 @@
                       </label>
                     </template>
                     <p class="text-xs text-gray-400" x-show="!facetOptions.departments.length">No departments available.</p>
+                  </div>
+                </div>
+                <div>
+                  <h3 class="text-sm font-semibold text-gray-700 mb-2">Durable Skills</h3>
+                  <div class="max-h-56 overflow-y-auto pr-1 space-y-1 text-sm">
+                    <template x-for="opt in facetOptions.durableSkills" :key="'skill-'+opt.value">
+                      <label class="flex items-start gap-2">
+                        <input type="checkbox" class="mt-1" :checked="isFacetSelected('durableSkills', opt.value)" @change="toggleFacet('durableSkills', opt.value)">
+                        <span class="leading-snug">
+                          <span class="help-dotted cursor-help" :title="skillDefinition(opt.label)" x-text="opt.label"></span>
+                          <span class="text-gray-500" x-text="' (' + opt.count + ')'"></span>
+                        </span>
+                      </label>
+                    </template>
+                    <p class="text-xs text-gray-400" x-show="!facetOptions.durableSkills.length">No durable skills available.</p>
                   </div>
                 </div>
                 <div>
@@ -149,46 +180,40 @@
                         <template x-if="!app.logo">
                           <div class="flex h-full w-full items-center justify-center text-3xl font-semibold text-slate-400" x-text="(app.title || '?').split(/\\s+/).map(word => word?.charAt(0) || '').join('').slice(0,2).toUpperCase() || '?'"></div>
                         </template>
-                        <template x-if="app.approved || app.installed">
-                          <span class="absolute top-3 left-3 inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-wide backdrop-blur"
-                                :class="app.installed ? 'border-green-200 bg-green-50/90 text-green-900' : 'border-blue-200 bg-blue-50/90 text-blue-900'"
-                                x-text="app.installed ? 'Installed' : 'Approved'"></span>
-                        </template>
                       </div>
 
                       <div class="flex-1 p-5 flex flex-col gap-4">
                         <div>
+                          <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500" x-text="primaryDepartment(app)"></p>
                           <h2 class="text-lg font-semibold leading-snug text-slate-900" x-text="app.title"></h2>
-                          <p class="text-xs text-slate-500 mt-1" x-text="Array.isArray(app.devices) && app.devices.length ? app.devices.join(', ') : 'Devices TBD'"></p>
+                          <p class="mt-1 text-sm font-medium text-slate-700" x-text="classroomUse(app)"></p>
+                          <p class="mt-1 text-xs text-slate-500" x-text="classroomSummary(app)"></p>
                         </div>
 
                         <div class="flex flex-wrap gap-1.5">
-                          <template x-for="d in parseDepts(app.department)" :key="d">
-                            <span class="text-[11px] font-medium px-2.5 py-1 rounded-full bg-slate-50 border border-slate-200 text-slate-700" x-text="d"></span>
+                          <template x-for="badge in cardBadges(app)" :key="badge.label">
+                            <span class="text-[11px] font-medium px-2.5 py-1 rounded-full border"
+                                  :class="badge.tone === 'green' ? 'border-green-200 bg-green-50 text-green-900' : (badge.tone === 'blue' ? 'border-blue-200 bg-blue-50 text-blue-900' : 'border-slate-200 bg-slate-50 text-slate-700')"
+                                  x-text="badge.label"></span>
                           </template>
                         </div>
 
-                        <div class="flex flex-wrap gap-2 text-[11px] font-medium text-slate-600">
-                          <template x-if="facet(app, 'free')"><span class="pill">Free</span></template>
-                          <template x-if="typeof app.time_min==='number' && app.time_min>0">
-                            <span class="pill" x-text="'Time | ' + app.time_min + ' min'"></span>
-                          </template>
-                          <template x-if="(app.input || facet(app,'hands') || facet(app,'controllers'))">
-                            <span class="pill" x-text="'Input | ' + (app.input || (facet(app,'hands')?'Hands':(facet(app,'controllers')?'Controllers':'-')))"></span>
-                          </template>
-                          <template x-if="(app.comfort || facet(app,'seated') || facet(app,'room') || facet(app,'standing'))">
-                            <span class="pill" x-text="'Comfort | ' + (app.comfort || (facet(app,'seated')?'Seated':(facet(app,'room')?'Room-scale':(facet(app,'standing')?'Standing':'Unknown'))))"></span>
-                          </template>
-                        </div>
-
-                        <template x-if="app.description"><p class="text-sm text-slate-800" x-text="app.description"></p></template>
-                        <template x-if="app.educational"><p class="text-sm text-blue-900 italic">Educational highlight: <span x-text="app.educational"></span></p></template>
+                        <template x-if="app.educational"><p class="text-sm text-slate-800" x-text="app.educational"></p></template>
+                        <template x-if="!app.educational && app.description"><p class="text-sm text-slate-800" x-text="app.description"></p></template>
+                        <template x-if="Array.isArray(app.durable_skills) && app.durable_skills.length">
+                          <div class="flex flex-wrap gap-1.5">
+                            <template x-for="skill in app.durable_skills.slice(0, 3)" :key="skill">
+                              <span class="skill-chip text-[11px] font-medium px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-900 cursor-help"
+                                    :title="skillDefinition(skill)"
+                                    x-text="skill"></span>
+                            </template>
+                          </div>
+                        </template>
 
                         <div class="mt-auto flex flex-wrap items-center gap-3">
-                          <div class="text-xs text-slate-500 truncate flex-1 min-w-[140px]" x-text="Array.isArray(app.tags) ? app.tags.join(', ') : (app.tags || '')"></div>
                           <div class="flex items-center gap-2 shrink-0">
                             <template x-if="app.link">
-                              <a :href="app.link" target="_blank" class="btn btn-secondary">Open app</a>
+                              <a :href="storeLink(app)" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" title="Opens the app's Meta store page or listing.">View store page</a>
                             </template>
                             <button class="btn btn-ghost text-sm font-semibold" @click="toggleDetails(index)" :aria-expanded="!!detailsOpen[index]" :aria-controls="'details-'+index" x-text="detailsOpen[index] ? 'Hide details' : 'Details'"></button>
                           </div>
@@ -205,6 +230,19 @@
                             <template x-if="app.age"><template><dt class="text-slate-500">Age</dt><dd x-text="app.age"></dd></template></template>
                           </dl>
 
+                          <template x-if="Array.isArray(app.durable_skills) && app.durable_skills.length">
+                            <div class="mt-3">
+                              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Durable skills</p>
+                              <div class="mt-2 flex flex-wrap gap-1.5">
+                                <template x-for="skill in app.durable_skills" :key="'detail-'+skill">
+                                  <span class="skill-chip text-xs font-medium px-2.5 py-1 rounded-full bg-white border border-amber-200 text-amber-900 cursor-help"
+                                        :title="skillDefinition(skill)"
+                                        x-text="skill"></span>
+                                </template>
+                              </div>
+                            </div>
+                          </template>
+
                           <template x-if="app.content_notes"><p class="mt-3 text-xs text-slate-600" x-text="'Notes: ' + app.content_notes"></p></template>
 
                           <p class="mt-2 text-xs text-slate-600 flex flex-wrap gap-4">
@@ -213,8 +251,8 @@
                           </p>
 
                           <div class="mt-3 flex flex-wrap gap-3">
-                            <template x-if="app.link"><a :href="app.link" target="_blank" class="text-sm font-semibold text-blue-600 hover:text-blue-700">Open store page</a></template>
-                            <button class="text-sm font-semibold text-slate-600 hover:text-slate-800" @click="navigator.clipboard?.writeText(app.link || window.location.href)">Copy link</button>
+                            <template x-if="app.link"><a :href="storeLink(app)" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-blue-600 hover:text-blue-700">View store page</a></template>
+                            <button class="text-sm font-semibold text-slate-600 hover:text-slate-800" @click="navigator.clipboard?.writeText(storeLink(app) || window.location.href)">Copy link</button>
                           </div>
                         </div>
                       </div>
