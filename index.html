@@ -7,8 +7,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Shared UI code/styles, single-sourced from xr-app-data so this site
        and xr-app-catalogue stay in sync. Do not fork a local copy. -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/styles.css">
-  <script defer src="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/app.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/styles.css?v=2026-07-20-3">
+  <script defer src="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/app.js?v=2026-07-20-3"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="bg-gray-50 text-gray-900" x-data="app({ site: 'library' })" x-init="initUrlSync(); loadData()">
@@ -53,6 +53,14 @@
                 :aria-selected="activeTab==='videos'"
                 @click="activeTab='videos'">
           Video Content
+        </button>
+        <button type="button"
+                class="px-3 py-2 text-sm font-semibold transition-colors border-b-2"
+                :class="activeTab==='webxr' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'"
+                aria-controls="tab-webxr"
+                :aria-selected="activeTab==='webxr'"
+                @click="activeTab='webxr'">
+          WebXR Content
         </button>
       </div>
 
@@ -352,6 +360,91 @@
           </div>
         </template>
         <p class="mt-6 text-xs text-gray-500" x-show="videosReady && filteredVideos.length === 0">No videos match the current filters.</p>
+      </div>
+
+      <div x-show="activeTab==='webxr'" id="tab-webxr">
+        <p class="text-xs text-gray-400 italic" x-show="!webxrReady">Loading WebXR catalog...</p>
+        <template x-if="webxrReady">
+          <div class="lg:grid lg:grid-cols-12 gap-6">
+            <aside class="lg:col-span-4 xl:col-span-3">
+              <div class="bg-white border rounded-xl shadow-sm p-4 space-y-5">
+                <div class="flex items-center justify-between">
+                  <h2 class="text-sm font-semibold text-gray-700">Filters</h2>
+                  <button class="text-xs text-blue-600 hover:underline" @click="clearWebxrFilters()">Reset</button>
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-600 mb-1">Search</label>
+                  <input type="text" x-model="webxrQuery" placeholder="Title, notes, tags." class="w-full border px-3 py-2 rounded-md shadow-sm">
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-600 mb-1">Department</label>
+                  <select x-model="webxrDepartment" class="w-full border px-3 py-2 rounded-md shadow-sm text-sm">
+                    <option value="">All Departments</option>
+                    <template x-for="opt in webxrDepartmentOptions" :key="'webxr-'+opt.value">
+                      <option :value="opt.value" x-text="opt.label + ' (' + opt.count + ')'"></option>
+                    </template>
+                  </select>
+                </div>
+              </div>
+            </aside>
+            <div class="lg:col-span-8 xl:col-span-9">
+              <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                <span class="text-sm text-gray-500" x-text="filteredWebxr.length + ' results'"></span>
+                <div class="flex items-center gap-3">
+                  <button class="text-xs text-blue-600 hover:underline" @click="copyViewLink()" x-text="linkCopied ? 'Link copied!' : 'Copy link to this view'"></button>
+                  <label class="text-xs text-gray-600">Sort</label>
+                  <select x-model="webxrSortMode" class="border px-3 py-2 rounded-md shadow-sm text-sm">
+                    <option value="az">Title A-Z</option>
+                    <option value="za">Title Z-A</option>
+                  </select>
+                </div>
+              </div>
+              <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-2">
+                <template x-for="(item, wIndex) in filteredWebxr" :key="'webxr-'+wIndex">
+                  <div class="group rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-white p-[1px] shadow-sm transition hover:shadow-lg">
+                    <article class="h-full rounded-[1.15rem] bg-white flex flex-col overflow-hidden">
+                      <div class="relative h-44 bg-indigo-900/5">
+                        <template x-if="item.logo">
+                          <img :src="item.logo" alt="" class="absolute inset-0 h-full w-full object-cover" loading="lazy" width="640" height="176">
+                        </template>
+                        <template x-if="!item.logo">
+                          <div class="flex h-full w-full items-center justify-center text-2xl font-semibold text-indigo-200 bg-gradient-to-br from-indigo-500/50 to-slate-900/50 text-opacity-90" x-text="(item.title || '?').split(/\\s+/).map(word => word?.charAt(0) || '').join('').slice(0,2).toUpperCase() || '?'"></div>
+                        </template>
+                        <template x-if="item.platform">
+                          <span class="absolute top-3 left-3 inline-flex items-center rounded-full border border-indigo-200 bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-indigo-900" x-text="item.platform"></span>
+                        </template>
+                      </div>
+
+                      <div class="p-5 flex-1 flex flex-col gap-3">
+                        <div>
+                          <h2 class="text-lg font-semibold leading-snug text-slate-900" x-text="item.title"></h2>
+                          <div class="flex flex-wrap gap-1.5 mt-2">
+                            <template x-for="dept in parseDepts(item.department)" :key="dept">
+                              <span class="text-[11px] font-medium px-2.5 py-1 rounded-full bg-slate-50 border border-slate-200 text-slate-700" x-text="dept"></span>
+                            </template>
+                          </div>
+                        </div>
+
+                        <template x-if="item.description"><p class="text-sm text-slate-800" x-text="item.description"></p></template>
+                        <template x-if="item.educational"><p class="text-sm text-indigo-900 italic" x-text="item.educational"></p></template>
+                        <template x-if="item.tags"><p class="text-xs text-slate-600" x-text="item.tags"></p></template>
+                        <template x-if="item.notes"><p class="text-xs text-slate-500" x-text="item.notes"></p></template>
+
+                        <div class="mt-auto flex flex-wrap items-center gap-3">
+                          <div class="text-xs text-slate-500 truncate flex-1 min-w-[140px]" x-text="item.link ? item.link : 'No external link provided'"></div>
+                          <template x-if="item.link">
+                            <a :href="item.link" target="_blank" class="btn btn-primary">Open</a>
+                          </template>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+        </template>
+        <p class="mt-6 text-xs text-gray-500" x-show="webxrReady && filteredWebxr.length === 0">No WebXR content matches the current filters.</p>
       </div>
     </div>
   </div>
