@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Lone Star XR Lab - App Library</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="styles.css">
-  <script defer src="app.js"></script>
+  <!-- Shared UI code/styles, single-sourced from xr-app-data so this site
+       and xr-app-catalogue stay in sync. Do not fork a local copy. -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/styles.css">
+  <script defer src="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/app.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="bg-gray-50 text-gray-900" x-data="app()" x-init="loadData()">
+<body class="bg-gray-50 text-gray-900" x-data="app({ site: 'library' })" x-init="loadData()">
   <div class="max-w-7xl mx-auto px-4 py-6">
     <div class="flex items-start justify-between gap-6">
       <div class="min-w-0">
