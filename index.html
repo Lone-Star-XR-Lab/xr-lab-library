@@ -7,8 +7,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Shared UI code/styles, single-sourced from xr-app-data so this site
        and xr-app-catalogue stay in sync. Do not fork a local copy. -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/styles.css?v=2026-07-20-12">
-  <script defer src="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/app.js?v=2026-07-20-12"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/styles.css?v=2026-07-20-15">
+  <script defer src="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/app.js?v=2026-07-20-15"></script>
   <!-- Alpine's focus plugin must load before Alpine core -- it traps
        keyboard focus inside the glossary modal and returns it to whatever
        was focused beforehand when the modal closes. -->
@@ -200,6 +200,18 @@
                     <p class="text-xs text-gray-400" x-show="!facetOptions.age.length">No age information.</p>
                   </div>
                 </div>
+                <div>
+                  <h3 class="text-sm font-semibold text-gray-700 mb-2">Licensing</h3>
+                  <div class="space-y-1 text-sm">
+                    <template x-for="opt in facetOptions.licensing" :key="'licensing-'+opt.value">
+                      <label class="flex items-center gap-2">
+                        <input type="checkbox" :checked="isFacetSelected('licensing', opt.value)" @change="toggleFacet('licensing', opt.value)">
+                        <span x-text="opt.label + ' (' + opt.count + ')'"></span>
+                      </label>
+                    </template>
+                    <p class="text-xs text-gray-400" x-show="!facetOptions.licensing.length">No licensing information.</p>
+                  </div>
+                </div>
               </div>
             </aside>
 
@@ -241,7 +253,7 @@
                         <div class="flex flex-wrap gap-1.5">
                           <template x-for="badge in cardBadges(app)" :key="badge.label">
                             <span class="text-[11px] font-medium px-2.5 py-1 rounded-full border"
-                                  :class="badge.tone === 'green' ? 'border-green-200 bg-green-50 text-green-900' : (badge.tone === 'blue' ? 'border-blue-200 bg-blue-50 text-blue-900' : 'border-slate-200 bg-slate-50 text-slate-700')"
+                                  :class="badge.tone === 'green' ? 'border-green-200 bg-green-50 text-green-900' : (badge.tone === 'blue' ? 'border-blue-200 bg-blue-50 text-blue-900' : (badge.tone === 'amber' ? 'border-amber-200 bg-amber-50 text-amber-900' : 'border-slate-200 bg-slate-50 text-slate-700'))"
                                   x-text="badge.label"></span>
                           </template>
                         </div>
@@ -542,6 +554,14 @@
           <h3 class="font-semibold text-slate-800 mb-2">Age Range</h3>
           <dl class="space-y-1.5">
             <template x-for="entry in ageLegend" :key="'legend-age-'+entry.label">
+              <div><dt class="inline font-medium text-slate-700" x-text="entry.label + ': '"></dt><dd class="inline text-slate-600" x-text="entry.text"></dd></div>
+            </template>
+          </dl>
+        </div>
+        <div>
+          <h3 class="font-semibold text-slate-800 mb-2">Licensing</h3>
+          <dl class="space-y-1.5">
+            <template x-for="entry in licensingLegend" :key="'legend-licensing-'+entry.label">
               <div><dt class="inline font-medium text-slate-700" x-text="entry.label + ': '"></dt><dd class="inline text-slate-600" x-text="entry.text"></dd></div>
             </template>
           </dl>
