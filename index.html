@@ -7,8 +7,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Shared UI code/styles, single-sourced from xr-app-data so this site
        and xr-app-catalogue stay in sync. Do not fork a local copy. -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/styles.css?v=2026-07-20-4">
-  <script defer src="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/app.js?v=2026-07-20-4"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/styles.css?v=2026-07-20-5">
+  <script defer src="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/app.js?v=2026-07-20-5"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="bg-gray-50 text-gray-900" x-data="app({ site: 'library' })" x-init="initUrlSync(); loadData()">
@@ -31,9 +31,13 @@
           This library shows the XR apps we have already reviewed for lab use. These are apps that are currently installed, approved for use, or actively being used in the lab.
         </p>
       </div>
-      <p class="pt-1 text-xs text-gray-500">
-        <span class="underline decoration-dotted cursor-help" title="XR is an umbrella term for VR, AR, and MR.">What is XR?</span>
-      </p>
+      <div class="pt-1 flex flex-col items-end gap-2 text-xs text-gray-500">
+        <a href="https://lone-star-xr-lab.github.io/xr-lab-catalogue/" class="font-semibold text-blue-600 hover:underline">Looking for more? Browse the full App Catalogue &rarr;</a>
+        <div class="flex items-center gap-3">
+          <button type="button" class="underline decoration-dotted hover:text-gray-700" @click="toggleLegend()">What do these terms mean?</button>
+          <span class="underline decoration-dotted cursor-help" title="XR is an umbrella term for VR, AR, and MR.">What is XR?</span>
+        </div>
+      </div>
     </div>
 
     <div class="mt-6">
@@ -67,8 +71,27 @@
       <div x-show="activeTab==='apps'" id="tab-apps">
         <p class="text-xs text-gray-400 italic" x-show="!appsReady">Loading app catalog...</p>
         <template x-if="appsReady">
+          <div>
+            <div class="mb-4 flex flex-wrap gap-2">
+              <template x-for="preset in presets" :key="'preset-'+preset.key">
+                <button type="button"
+                        class="rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors"
+                        :class="isPresetActive(preset.key) ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'"
+                        :title="preset.hint"
+                        @click="applyPreset(preset.key)"
+                        x-text="preset.label"></button>
+              </template>
+            </div>
+
+            <div class="mb-4 lg:hidden">
+              <button type="button" class="flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700" @click="toggleMobileFilters()">
+                <span x-text="mobileFiltersOpen ? 'Hide filters' : 'Show filters'"></span>
+                <span x-show="activeFilterCount > 0" class="inline-flex items-center justify-center rounded-full bg-blue-600 text-white text-[11px] font-bold h-5 min-w-[1.25rem] px-1" x-text="activeFilterCount"></span>
+              </button>
+            </div>
+
           <div class="lg:grid lg:grid-cols-12 gap-6">
-            <aside class="lg:col-span-4 xl:col-span-3">
+            <aside class="lg:col-span-4 xl:col-span-3" :class="mobileFiltersOpen ? 'block mb-6' : 'hidden lg:block'">
               <div class="bg-white border rounded-xl shadow-sm p-4 space-y-6">
                 <div>
                   <label class="block text-xs text-gray-600 mb-1">Search</label>
@@ -273,6 +296,7 @@
               </div>
             </div>
           </div>
+          </div>
         </template>
         <p class="mt-6 text-xs text-gray-500" x-show="appsReady && filteredApps.length === 0">No results found.</p>
       </div>
@@ -280,8 +304,15 @@
       <div x-show="activeTab==='videos'" id="tab-videos">
         <p class="text-xs text-gray-400 italic" x-show="!videosReady">Loading video catalog...</p>
         <template x-if="videosReady">
+          <div>
+            <div class="mb-4 lg:hidden">
+              <button type="button" class="flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700" @click="toggleMobileFilters()">
+                <span x-text="mobileFiltersOpen ? 'Hide filters' : 'Show filters'"></span>
+                <span x-show="activeVideoFilterCount > 0" class="inline-flex items-center justify-center rounded-full bg-blue-600 text-white text-[11px] font-bold h-5 min-w-[1.25rem] px-1" x-text="activeVideoFilterCount"></span>
+              </button>
+            </div>
           <div class="lg:grid lg:grid-cols-12 gap-6">
-            <aside class="lg:col-span-4 xl:col-span-3">
+            <aside class="lg:col-span-4 xl:col-span-3" :class="mobileFiltersOpen ? 'block mb-6' : 'hidden lg:block'">
               <div class="bg-white border rounded-xl shadow-sm p-4 space-y-5">
                 <div class="flex items-center justify-between">
                   <h2 class="text-sm font-semibold text-gray-700">Filters</h2>
@@ -358,6 +389,7 @@
               </div>
             </div>
           </div>
+          </div>
         </template>
         <p class="mt-6 text-xs text-gray-500" x-show="videosReady && filteredVideos.length === 0">No videos match the current filters.</p>
       </div>
@@ -365,8 +397,15 @@
       <div x-show="activeTab==='webxr'" id="tab-webxr">
         <p class="text-xs text-gray-400 italic" x-show="!webxrReady">Loading WebXR catalog...</p>
         <template x-if="webxrReady">
+          <div>
+            <div class="mb-4 lg:hidden">
+              <button type="button" class="flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700" @click="toggleMobileFilters()">
+                <span x-text="mobileFiltersOpen ? 'Hide filters' : 'Show filters'"></span>
+                <span x-show="activeWebxrFilterCount > 0" class="inline-flex items-center justify-center rounded-full bg-blue-600 text-white text-[11px] font-bold h-5 min-w-[1.25rem] px-1" x-text="activeWebxrFilterCount"></span>
+              </button>
+            </div>
           <div class="lg:grid lg:grid-cols-12 gap-6">
-            <aside class="lg:col-span-4 xl:col-span-3">
+            <aside class="lg:col-span-4 xl:col-span-3" :class="mobileFiltersOpen ? 'block mb-6' : 'hidden lg:block'">
               <div class="bg-white border rounded-xl shadow-sm p-4 space-y-5">
                 <div class="flex items-center justify-between">
                   <h2 class="text-sm font-semibold text-gray-700">Filters</h2>
@@ -443,8 +482,64 @@
               </div>
             </div>
           </div>
+          </div>
         </template>
         <p class="mt-6 text-xs text-gray-500" x-show="webxrReady && filteredWebxr.length === 0">No WebXR content matches the current filters.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tap-friendly glossary for filter jargon (Comfort Level, Motion Level,
+       Input Type, Age Range, Durable Skills). Triggered by the "What do
+       these terms mean?" button in the header. A click-based modal instead
+       of hover-only tooltips so it works on touch devices. -->
+  <div x-show="showLegend" x-transition style="display: none;" class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-900/50 p-4 sm:p-8" @click.self="toggleLegend()" @keydown.escape.window="showLegend=false">
+    <div class="w-full max-w-2xl rounded-xl bg-white shadow-xl">
+      <div class="flex items-center justify-between border-b px-5 py-4">
+        <h2 class="text-lg font-semibold text-slate-900">What do these terms mean?</h2>
+        <button type="button" class="text-slate-400 hover:text-slate-600 text-xl leading-none" @click="toggleLegend()" aria-label="Close">&times;</button>
+      </div>
+      <div class="max-h-[70vh] overflow-y-auto px-5 py-4 space-y-6 text-sm">
+        <div>
+          <h3 class="font-semibold text-slate-800 mb-2">Comfort Level</h3>
+          <dl class="space-y-1.5">
+            <template x-for="entry in comfortLegend" :key="'legend-comfort-'+entry.label">
+              <div><dt class="inline font-medium text-slate-700" x-text="entry.label + ': '"></dt><dd class="inline text-slate-600" x-text="entry.text"></dd></div>
+            </template>
+          </dl>
+        </div>
+        <div>
+          <h3 class="font-semibold text-slate-800 mb-2">Motion Level</h3>
+          <dl class="space-y-1.5">
+            <template x-for="entry in motionLegend" :key="'legend-motion-'+entry.label">
+              <div><dt class="inline font-medium text-slate-700" x-text="entry.label + ': '"></dt><dd class="inline text-slate-600" x-text="entry.text"></dd></div>
+            </template>
+          </dl>
+        </div>
+        <div>
+          <h3 class="font-semibold text-slate-800 mb-2">Input Type</h3>
+          <dl class="space-y-1.5">
+            <template x-for="entry in inputLegend" :key="'legend-input-'+entry.label">
+              <div><dt class="inline font-medium text-slate-700" x-text="entry.label + ': '"></dt><dd class="inline text-slate-600" x-text="entry.text"></dd></div>
+            </template>
+          </dl>
+        </div>
+        <div>
+          <h3 class="font-semibold text-slate-800 mb-2">Age Range</h3>
+          <dl class="space-y-1.5">
+            <template x-for="entry in ageLegend" :key="'legend-age-'+entry.label">
+              <div><dt class="inline font-medium text-slate-700" x-text="entry.label + ': '"></dt><dd class="inline text-slate-600" x-text="entry.text"></dd></div>
+            </template>
+          </dl>
+        </div>
+        <div>
+          <h3 class="font-semibold text-slate-800 mb-2">Durable Skills</h3>
+          <dl class="space-y-1.5">
+            <template x-for="entry in durableSkillsLegend" :key="'legend-skill-'+entry.label">
+              <div><dt class="inline font-medium text-slate-700" x-text="entry.label + ': '"></dt><dd class="inline text-slate-600" x-text="entry.text"></dd></div>
+            </template>
+          </dl>
+        </div>
       </div>
     </div>
   </div>
