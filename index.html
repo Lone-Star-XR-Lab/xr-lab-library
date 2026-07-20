@@ -7,8 +7,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Shared UI code/styles, single-sourced from xr-app-data so this site
        and xr-app-catalogue stay in sync. Do not fork a local copy. -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/styles.css?v=2026-07-20-7">
-  <script defer src="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/app.js?v=2026-07-20-7"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/styles.css?v=2026-07-20-9">
+  <script defer src="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/app.js?v=2026-07-20-9"></script>
   <!-- Alpine's focus plugin must load before Alpine core -- it traps
        keyboard focus inside the glossary modal and returns it to whatever
        was focused beforehand when the modal closes. -->
@@ -368,7 +368,7 @@
                           <img :src="video.logo" alt="" class="absolute inset-0 h-full w-full object-cover" loading="lazy" width="640" height="176">
                         </template>
                         <template x-if="!video.logo">
-                          <div class="flex h-full w-full items-center justify-center text-2xl font-semibold text-indigo-200 bg-gradient-to-br from-indigo-500/50 to-slate-900/50 text-opacity-90" x-text="(video.title || '?').split(/\\s+/).map(word => word?.charAt(0) || '').join('').slice(0,2).toUpperCase() || '?'"></div>
+                          <div class="flex h-full w-full items-center justify-center text-2xl font-semibold text-indigo-200 bg-gradient-to-br from-indigo-500/70 to-slate-900/70 text-opacity-90" x-text="(video.title || '?').split(/\\s+/).map(word => word?.charAt(0) || '').join('').slice(0,2).toUpperCase() || '?'"></div>
                         </template>
                         <template x-if="video.platform">
                           <span class="absolute top-3 left-3 inline-flex items-center rounded-full border border-indigo-200 bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-indigo-900" x-text="video.platform"></span>
@@ -461,7 +461,7 @@
                           <img :src="item.logo" alt="" class="absolute inset-0 h-full w-full object-cover" loading="lazy" width="640" height="176">
                         </template>
                         <template x-if="!item.logo">
-                          <div class="flex h-full w-full items-center justify-center text-2xl font-semibold text-indigo-200 bg-gradient-to-br from-indigo-500/50 to-slate-900/50 text-opacity-90" x-text="(item.title || '?').split(/\\s+/).map(word => word?.charAt(0) || '').join('').slice(0,2).toUpperCase() || '?'"></div>
+                          <div class="flex h-full w-full items-center justify-center text-2xl font-semibold text-indigo-200 bg-gradient-to-br from-indigo-500/70 to-slate-900/70 text-opacity-90" x-text="(item.title || '?').split(/\\s+/).map(word => word?.charAt(0) || '').join('').slice(0,2).toUpperCase() || '?'"></div>
                         </template>
                         <template x-if="item.platform">
                           <span class="absolute top-3 left-3 inline-flex items-center rounded-full border border-indigo-200 bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-indigo-900" x-text="item.platform"></span>
