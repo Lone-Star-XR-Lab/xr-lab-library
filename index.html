@@ -7,8 +7,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Shared UI code/styles, single-sourced from xr-app-data so this site
        and xr-app-catalogue stay in sync. Do not fork a local copy. -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/styles.css?v=2026-07-20-15">
-  <script defer src="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/app.js?v=2026-07-20-15"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/styles.css?v=2026-07-20-16">
+  <script defer src="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/app.js?v=2026-07-20-16"></script>
   <!-- Alpine's focus plugin must load before Alpine core -- it traps
        keyboard focus inside the glossary modal and returns it to whatever
        was focused beforehand when the modal closes. -->
@@ -154,10 +154,11 @@
                 </div>
                 <div>
                   <h3 class="text-sm font-semibold text-gray-700 mb-2">Comfort Level</h3>
-                  <div class="space-y-1 text-sm">
+                  <div class="flex flex-wrap gap-1.5">
                     <template x-for="opt in facetOptions.comfort" :key="'comfort-'+opt.value">
-                      <label class="flex items-center gap-2">
-                        <input type="checkbox" :checked="isFacetSelected('comfort', opt.value)" @change="toggleFacet('comfort', opt.value)">
+                      <label class="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs cursor-pointer transition-colors"
+                             :class="isFacetSelected('comfort', opt.value) ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'">
+                        <input type="checkbox" class="sr-only" :checked="isFacetSelected('comfort', opt.value)" @change="toggleFacet('comfort', opt.value)">
                         <span x-text="opt.label + ' (' + opt.count + ')'"></span>
                       </label>
                     </template>
@@ -166,10 +167,11 @@
                 </div>
                 <div>
                   <h3 class="text-sm font-semibold text-gray-700 mb-2">Input Type</h3>
-                  <div class="space-y-1 text-sm">
+                  <div class="flex flex-wrap gap-1.5">
                     <template x-for="opt in facetOptions.input" :key="'input-'+opt.value">
-                      <label class="flex items-center gap-2">
-                        <input type="checkbox" :checked="isFacetSelected('input', opt.value)" @change="toggleFacet('input', opt.value)">
+                      <label class="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs cursor-pointer transition-colors"
+                             :class="isFacetSelected('input', opt.value) ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'">
+                        <input type="checkbox" class="sr-only" :checked="isFacetSelected('input', opt.value)" @change="toggleFacet('input', opt.value)">
                         <span x-text="opt.label + ' (' + opt.count + ')'"></span>
                       </label>
                     </template>
@@ -178,10 +180,11 @@
                 </div>
                 <div>
                   <h3 class="text-sm font-semibold text-gray-700 mb-2">Devices</h3>
-                  <div class="max-h-40 overflow-y-auto pr-1 space-y-1 text-sm">
+                  <div class="flex flex-wrap gap-1.5">
                     <template x-for="opt in facetOptions.devices" :key="'device-'+opt.value">
-                      <label class="flex items-center gap-2">
-                        <input type="checkbox" :checked="isFacetSelected('devices', opt.value)" @change="toggleFacet('devices', opt.value)">
+                      <label class="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs cursor-pointer transition-colors"
+                             :class="isFacetSelected('devices', opt.value) ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'">
+                        <input type="checkbox" class="sr-only" :checked="isFacetSelected('devices', opt.value)" @change="toggleFacet('devices', opt.value)">
                         <span x-text="opt.label + ' (' + opt.count + ')'"></span>
                       </label>
                     </template>
@@ -190,10 +193,11 @@
                 </div>
                 <div>
                   <h3 class="text-sm font-semibold text-gray-700 mb-2">Age Range</h3>
-                  <div class="space-y-1 text-sm">
+                  <div class="flex flex-wrap gap-1.5">
                     <template x-for="opt in facetOptions.age" :key="'age-'+opt.value">
-                      <label class="flex items-center gap-2">
-                        <input type="checkbox" :checked="isFacetSelected('age', opt.value)" @change="toggleFacet('age', opt.value)">
+                      <label class="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs cursor-pointer transition-colors"
+                             :class="isFacetSelected('age', opt.value) ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'">
+                        <input type="checkbox" class="sr-only" :checked="isFacetSelected('age', opt.value)" @change="toggleFacet('age', opt.value)">
                         <span x-text="opt.label + ' (' + opt.count + ')'"></span>
                       </label>
                     </template>
@@ -202,10 +206,11 @@
                 </div>
                 <div>
                   <h3 class="text-sm font-semibold text-gray-700 mb-2">Licensing</h3>
-                  <div class="space-y-1 text-sm">
+                  <div class="flex flex-wrap gap-1.5">
                     <template x-for="opt in facetOptions.licensing" :key="'licensing-'+opt.value">
-                      <label class="flex items-center gap-2">
-                        <input type="checkbox" :checked="isFacetSelected('licensing', opt.value)" @change="toggleFacet('licensing', opt.value)">
+                      <label class="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs cursor-pointer transition-colors"
+                             :class="isFacetSelected('licensing', opt.value) ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'">
+                        <input type="checkbox" class="sr-only" :checked="isFacetSelected('licensing', opt.value)" @change="toggleFacet('licensing', opt.value)">
                         <span x-text="opt.label + ' (' + opt.count + ')'"></span>
                       </label>
                     </template>
