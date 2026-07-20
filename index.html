@@ -7,8 +7,12 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Shared UI code/styles, single-sourced from xr-app-data so this site
        and xr-app-catalogue stay in sync. Do not fork a local copy. -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/styles.css?v=2026-07-20-5">
-  <script defer src="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/app.js?v=2026-07-20-5"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/styles.css?v=2026-07-20-6">
+  <script defer src="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/app.js?v=2026-07-20-6"></script>
+  <!-- Alpine's focus plugin must load before Alpine core -- it traps
+       keyboard focus inside the glossary modal and returns it to whatever
+       was focused beforehand when the modal closes. -->
+  <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="bg-gray-50 text-gray-900" x-data="app({ site: 'library' })" x-init="initUrlSync(); loadData()">
@@ -88,6 +92,15 @@
                 <span x-text="mobileFiltersOpen ? 'Hide filters' : 'Show filters'"></span>
                 <span x-show="activeFilterCount > 0" class="inline-flex items-center justify-center rounded-full bg-blue-600 text-white text-[11px] font-bold h-5 min-w-[1.25rem] px-1" x-text="activeFilterCount"></span>
               </button>
+            </div>
+
+            <div class="mb-4 flex flex-wrap items-center gap-2" x-show="activeFilterChips.length">
+              <template x-for="chip in activeFilterChips" :key="chip.type + '-' + (chip.group||'') + '-' + (chip.value || chip.label)">
+                <button type="button" class="inline-flex items-center gap-1.5 rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-700 hover:border-slate-400" @click="removeChip(chip)">
+                  <span x-text="chip.label"></span>
+                  <span class="text-slate-400" aria-hidden="true">&times;</span>
+                </button>
+              </template>
             </div>
 
           <div class="lg:grid lg:grid-cols-12 gap-6">
@@ -194,6 +207,7 @@
               <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                 <span class="text-sm text-gray-500" x-text="filteredApps.length + ' results'"></span>
                 <div class="flex items-center gap-3">
+                  <button class="text-xs text-blue-600 hover:underline" x-show="activeFilterChips.length" @click="clearAll()">Clear all filters</button>
                   <button class="text-xs text-blue-600 hover:underline" @click="copyViewLink()" x-text="linkCopied ? 'Link copied!' : 'Copy link to this view'"></button>
                   <label class="text-xs text-gray-600">Sort</label>
                   <select x-model="sortMode" class="border px-3 py-2 rounded-md shadow-sm text-sm">
@@ -494,7 +508,7 @@
        these terms mean?" button in the header. A click-based modal instead
        of hover-only tooltips so it works on touch devices. -->
   <div x-show="showLegend" x-transition style="display: none;" class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-900/50 p-4 sm:p-8" @click.self="toggleLegend()" @keydown.escape.window="showLegend=false">
-    <div class="w-full max-w-2xl rounded-xl bg-white shadow-xl">
+    <div x-trap.inert.noscroll="showLegend" class="w-full max-w-2xl rounded-xl bg-white shadow-xl">
       <div class="flex items-center justify-between border-b px-5 py-4">
         <h2 class="text-lg font-semibold text-slate-900">What do these terms mean?</h2>
         <button type="button" class="text-slate-400 hover:text-slate-600 text-xl leading-none" @click="toggleLegend()" aria-label="Close">&times;</button>
