@@ -7,8 +7,11 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Shared UI code/styles, single-sourced from xr-app-data so this site
        and xr-app-catalogue stay in sync. Do not fork a local copy. -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/styles.css?v=2026-07-20-16">
-  <script defer src="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@main/ui/app.js?v=2026-07-20-16"></script>
+  <!-- Pinned to a commit SHA, not @main -- jsdelivr's @main caching proved
+       unreliable (stale content served even after purge). See xr-app-data's
+       README.md "Deploying a change" section for how to bump this SHA. -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@25ce1aa6ef3bae1b7026139104e046ba2a15363e/ui/styles.css">
+  <script defer src="https://cdn.jsdelivr.net/gh/Lone-Star-XR-Lab/xr-app-data@25ce1aa6ef3bae1b7026139104e046ba2a15363e/ui/app.js"></script>
   <!-- Alpine's focus plugin must load before Alpine core -- it traps
        keyboard focus inside the glossary modal and returns it to whatever
        was focused beforehand when the modal closes. -->
